@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 
 namespace Ranger
 {
     public partial class MainWindow : Window
+
     {
         public static ObservableCollection<Skill> Skills = new ObservableCollection<Skill>();
         public static ObservableCollection<Resource> Resources = new ObservableCollection<Resource>();
 
-        Dictionary<string, int[]> DayOfWeekCoverage;
+        Dictionary<DaysOfWeek, int[]> DayOfWeekCoverage;
         Rectangle[] mondayRects;
         Rectangle[] tuesdayRects;
         Rectangle[] wednesdayRects;
@@ -45,7 +44,7 @@ namespace Ranger
 
             HasChanges = false;
             CreateRectArray();
-            CleanPlot();
+            PlotCoverageUI(null);
             SetDefaultWindow();
         }
 
@@ -332,7 +331,7 @@ namespace Ranger
             {
                 if (SelectedResource is not null)
                 {
-                    SelectedResource.AvailabilityWindows.Add(new AvailabilityWindow("Mon", TimeOnly.MinValue, TimeOnly.MinValue));
+                    SelectedResource.AvailabilityWindows.Add(new AvailabilityWindow(DaysOfWeek.Mon, TimeOnly.MinValue, TimeOnly.MinValue));
                     HasChanges = true;
                 }
                 else
@@ -430,7 +429,6 @@ namespace Ranger
             //}
         }
 
-
         private void PlotCoverage(AvailabilityWindow? aw)
         {
             try
@@ -457,13 +455,13 @@ namespace Ranger
                     LinkedList<string> daysList = new LinkedList<string>(Enum.GetNames(typeof(DaysOfWeek)));
 
                     //find next day
-                    string? nextDay = null;
+                    DaysOfWeek nextDay = DaysOfWeek.Mon;
 
-                    LinkedListNode<string>? currentNode = daysList.Find(aw.DayOfWeek);
+                    LinkedListNode<string>? currentNode = daysList.Find(aw.DayOfWeek.ToString());
                     if (currentNode != null)
                     {
                         LinkedListNode<string> nextNode = currentNode.Next ?? daysList.First;
-                        nextDay = nextNode.Value;
+                        _=Enum.TryParse<DaysOfWeek>(nextNode.Value, out nextDay);
                     }
 
                     //next day found, now plot
@@ -487,18 +485,18 @@ namespace Ranger
                 if (skill is null) return;
 
                 DayOfWeekCoverage = new();
-                foreach (string day in Enum.GetNames(typeof(DaysOfWeek)))
+                foreach (DaysOfWeek day in Enum.GetValues(typeof(DaysOfWeek)))
                 {
                     DayOfWeekCoverage.Add(day, new int[24]);
                 }
 
-                CleanPlot();
+                PlotCoverageUI(null);
 
                 foreach (Resource res in Resources)
                 {
                     if (res.Skills.Any(x => x.Name == skill.Name))
                     {
-                        foreach (string day in Enum.GetNames(typeof(DaysOfWeek)))
+                        foreach (DaysOfWeek day in Enum.GetValues(typeof(DaysOfWeek)))
                         {
                             AvailabilityWindow? aw = res.AvailabilityWindows.SingleOrDefault(x => x.DayOfWeek == day);
                             PlotCoverage(aw);
@@ -506,16 +504,7 @@ namespace Ranger
                     }
                 }
 
-                foreach (Resource res in Resources)
-                {
-                    if (res.Skills.Any(x => x.Name == skill.Name))
-                    {
-                        foreach (string day in Enum.GetNames(typeof(DaysOfWeek)))
-                        {
-                            PlotCoverageUI(day);
-                        }
-                    }
-                }
+                PlotCoverageUI(DayOfWeekCoverage);
             }
             catch (Exception ex)
             {
@@ -523,76 +512,60 @@ namespace Ranger
             }
         }
 
-        private void CleanPlot()
+        private void PlotCoverageUI(Dictionary<DaysOfWeek, int[]>? plot)
         {
             try
             {
-                DayOfWeekCoverage = new();
-                foreach (string day in Enum.GetNames(typeof(DaysOfWeek)))
+                if(plot is null) //clean the UI bars
                 {
-                    DayOfWeekCoverage.Add(day, new int[24]);
                     for (int i = 0; i < MaxHours; i++)
                     {
-                        DayOfWeekCoverage[day][i] = 0;
+                        mondayRects[i].Fill = Brushes.Gray;
+                        mondayRects[i].ToolTip = "";
+
+                        tuesdayRects[i].Fill = Brushes.Gray;
+                        tuesdayRects[i].ToolTip = "";
+
+                        wednesdayRects[i].Fill = Brushes.Gray;
+                        wednesdayRects[i].ToolTip = "";
+
+                        thursdayRects[i].Fill = Brushes.Gray;
+                        thursdayRects[i].ToolTip = "";
+
+                        fridayRects[i].Fill = Brushes.Gray;
+                        fridayRects[i].ToolTip = "";
+
+                        saturdayRects[i].Fill = Brushes.Gray;
+                        saturdayRects[i].ToolTip = "";
+
+                        sundayRects[i].Fill = Brushes.Gray;
+                        sundayRects[i].ToolTip = "";
                     }
                 }
-
-                foreach (string day in Enum.GetNames(typeof(DaysOfWeek)))
+                else
                 {
-                    PlotCoverageUI(day);
-                }
-            }
-            catch (Exception ex)
-            {
-                ShowError(ex.Message);
-            }
-        }
+                    for (int i = 0; i < MaxHours; i++)
+                    {
+                        mondayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Mon][i], 0, Resources.Count));
+                        mondayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Mon][i] };
 
-        private void PlotCoverageUI(string day)
-        {
-            try
-            {
-                if(string.IsNullOrWhiteSpace(day))
-                {
-                    throw new ArgumentNullException("Invalid day of week.");
-                }
+                        tuesdayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Tue][i], 0, Resources.Count));
+                        tuesdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Tue][i] };
 
-                for (int i = 0; i < MaxHours; i++)
-                {
-                    if(day == "Mon")
-                    {
-                        mondayRects[i].Fill = new SolidColorBrush(HeatMapColor(DayOfWeekCoverage[day][i], 0, Resources.Count));
-                        mondayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[day][i] };
-                    }
-                    else if(day == "Tue")
-                    {
-                        tuesdayRects[i].Fill = new SolidColorBrush(HeatMapColor(DayOfWeekCoverage[day][i], 0, Resources.Count));
-                        tuesdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[day][i] };
-                    }
-                    else if (day == "Wed")
-                    {
-                        wednesdayRects[i].Fill = new SolidColorBrush(HeatMapColor(DayOfWeekCoverage[day][i], 0, Resources.Count));
-                        wednesdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[day][i] };
-                    }
-                    else if (day == "Thu")
-                    {
-                        thursdayRects[i].Fill = new SolidColorBrush(HeatMapColor(DayOfWeekCoverage[day][i], 0, Resources.Count));
-                        thursdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[day][i] };
-                    }
-                    else if (day == "Fri")
-                    {
-                        fridayRects[i].Fill = new SolidColorBrush(HeatMapColor(DayOfWeekCoverage[day][i], 0, Resources.Count));
-                        fridayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[day][i] };
-                    }
-                    else if (day == "Sat")
-                    {
-                        saturdayRects[i].Fill = new SolidColorBrush(HeatMapColor(DayOfWeekCoverage[day][i], 0, Resources.Count));
-                        saturdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[day][i] };
-                    }
-                    else if (day == "Sun")
-                    {
-                        sundayRects[i].Fill = new SolidColorBrush(HeatMapColor(DayOfWeekCoverage[day][i], 0, Resources.Count));
-                        sundayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[day][i] };
+                        wednesdayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Wed][i], 0, Resources.Count));
+                        wednesdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Wed][i] };
+
+                        thursdayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Thu][i], 0, Resources.Count));
+                        thursdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Thu][i] };
+
+                        fridayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Fri][i], 0, Resources.Count));
+                        fridayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Fri][i] };
+
+                        saturdayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Sat][i], 0, Resources.Count));
+                        saturdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Sat][i] };
+
+                        sundayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Sun][i], 0, Resources.Count));
+                        sundayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Sun][i] };
                     }
                 }
             }
@@ -602,7 +575,7 @@ namespace Ranger
             }
         }
 
-        private Color HeatMapColor(double value, double min, double max)
+        private Color GetHeatMapColor(double value, double min, double max)
         {
             Color firstColour = Colors.ForestGreen; //LightSkyBlue
             Color secondColour = Colors.LightSkyBlue; //RoyalBlue
