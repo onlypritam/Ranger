@@ -365,25 +365,6 @@ namespace Ranger
             MessageBox.Show($"An Error has occured: {errorMsg}","Oops!", MessageBoxButton.OK,MessageBoxImage.Error);
         }
 
-        private void EnableUI(bool state)
-        {
-            BtnNew.IsEnabled = state;   
-            BtnSelectFile.IsEnabled = state;
-            BtnSaveFile.IsEnabled = state;
-            BtnSaveFileAs.IsEnabled = state;
-
-            DgSkills.IsEnabled = state;
-            DgResources.IsEnabled = state;
-            DgResourcesSkillMap.IsEnabled = state;
-            DgShiftAllocation.IsEnabled = state;
-
-            BtnAddSkill.IsEnabled = state;
-            BtnAddResource.IsEnabled = state;
-            BtnCopyResource.IsEnabled = state;
-            BtnMapResourceSkill.IsEnabled = state;
-            BtnAllocateShift.IsEnabled = state;
-        }
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             try
@@ -397,36 +378,6 @@ namespace Ranger
             {
                 ShowError(ex.Message);
             }
-        }
-
-        private void CboSkills_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //try
-            //{
-            //    Skill skill = (Skill)CboSkills.SelectedItem;
-
-            //    DayOfWeekCoverage = new();
-            //    foreach (string day in Enum.GetNames(typeof(DaysOfWeek)))
-            //    {
-            //        DayOfWeekCoverage.Add(day, new int[24]);
-            //    }
-
-            //    foreach (Resource res in Resources)
-            //    {
-            //        if (res.Skills.Any(x => x.Name == skill.Name))
-            //        {
-            //            foreach (string day in Enum.GetNames(typeof(DaysOfWeek)))
-            //            {
-            //                AvailabilityWindow? aw = res.AvailabilityWindows.SingleOrDefault(x => x.DayOfWeek == day);
-            //                PlotCoverage(aw);
-            //            }
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    ShowError(ex.Message);
-            //}
         }
 
         private void PlotCoverage(AvailabilityWindow? aw)
@@ -457,12 +408,9 @@ namespace Ranger
                     //find next day
                     DaysOfWeek nextDay = DaysOfWeek.Mon;
 
-                    LinkedListNode<string>? currentNode = daysList.Find(aw.DayOfWeek.ToString());
-                    if (currentNode != null)
-                    {
-                        LinkedListNode<string> nextNode = currentNode.Next ?? daysList.First;
-                        _=Enum.TryParse<DaysOfWeek>(nextNode.Value, out nextDay);
-                    }
+                    LinkedListNode<string> currentNode = daysList.Find(aw.DayOfWeek.ToString());
+                    LinkedListNode<string> nextNode = currentNode.Next ?? daysList.First;
+                    _=Enum.TryParse<DaysOfWeek>(nextNode.Value, out nextDay);
 
                     //next day found, now plot
                     for (int i = 0; i < aw.EndTime.Hour; i++)
@@ -484,13 +432,13 @@ namespace Ranger
                 Skill skill = (Skill)CboSkills.SelectedItem;
                 if (skill is null) return;
 
+                PlotCoverageUI(null);
+
                 DayOfWeekCoverage = new();
                 foreach (DaysOfWeek day in Enum.GetValues(typeof(DaysOfWeek)))
                 {
                     DayOfWeekCoverage.Add(day, new int[24]);
                 }
-
-                PlotCoverageUI(null);
 
                 foreach (Resource res in Resources)
                 {
@@ -498,7 +446,16 @@ namespace Ranger
                     {
                         foreach (DaysOfWeek day in Enum.GetValues(typeof(DaysOfWeek)))
                         {
-                            AvailabilityWindow? aw = res.AvailabilityWindows.SingleOrDefault(x => x.DayOfWeek == day);
+                            AvailabilityWindow? aw = null;
+                            try
+                            {
+                                aw = res.AvailabilityWindows.SingleOrDefault(x => x.DayOfWeek == day);
+                            }
+                            catch (System.InvalidOperationException)
+                            {
+                                ShowError("Duplicate shift found for resource " + res.Name);
+                            }
+                            
                             PlotCoverage(aw);
                         }
                     }
@@ -577,8 +534,10 @@ namespace Ranger
 
         private Color GetHeatMapColor(double value, double min, double max)
         {
-            Color firstColour = Colors.ForestGreen; //LightSkyBlue
-            Color secondColour = Colors.LightSkyBlue; //RoyalBlue
+            Color firstColour = Colors.LightSkyBlue; //LightSkyBlue
+            Color secondColour = Colors.RoyalBlue; //RoyalBlue
+
+            return LerpColor(value,firstColour,secondColour);
 
             // Example: Take the RGB
             //135-206-250 // Light Sky Blue
@@ -605,6 +564,18 @@ namespace Ranger
 
             return Color.FromArgb(255, (byte)r, (byte)g, (byte)b);
         }
+
+        public Color LerpColor(double value, Color startColor, Color endColor)
+        {
+            // reuse some code from the HeatMapColor
+
+            int r = (int)((endColor.R * value) + (startColor.R * (1 - value)));
+            int g = (int)((endColor.G * value) + (startColor.G * (1 - value)));
+            int b = (int)((endColor.B * value) + (startColor.B * (1 - value)));
+
+            return Color.FromArgb(255, (byte)r, (byte)g, (byte)b);
+        }
+
 
         private void CreateRectArray()
         {

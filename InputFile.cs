@@ -13,6 +13,5 @@ namespace Ranger
         public List<Skill> Skills { get; set; }
 
         public List<Resource> Resources { get; set; }
-
     }
 }

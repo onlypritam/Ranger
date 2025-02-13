@@ -120,7 +120,7 @@
 
                     <DataGrid x:Name="DgSkills" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="1"  AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=TwoWay}" EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name, Mode=TwoWay}" EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
 
                             <DataGridTemplateColumn Header="Delete" Width="80">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -134,7 +134,7 @@
 
                     <DataGrid x:Name="DgResources" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="1"  AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" SelectionChanged="DgResources_SelectionChanged">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=TwoWay}" EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
+                            <DataGridTextColumn Header="Name" Width="*"  Binding="{Binding Name, Mode=TwoWay}" EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
 
                             <DataGridTemplateColumn Header="Delete"  Width="80">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -168,7 +168,7 @@
 
                                 <DataGrid x:Name="DgResourcesSkillMap" Grid.Row="2" Grid.Column="1"  AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" Grid.ColumnSpan="2">
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Skill" Binding="{Binding Name, Mode=TwoWay}" IsReadOnly="True"/>
+                                        <DataGridTextColumn Header="Skill" Width="*"  Binding="{Binding Name, Mode=TwoWay}" IsReadOnly="True"/>
                                         <DataGridTemplateColumn Header="Delete"  Width="80">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
@@ -204,7 +204,7 @@
                                 <DataGrid x:Name="DgShiftAllocation" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="8" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" >
                                     <DataGrid.Columns>
                                         <!--<DataGridComboBoxColumn Header="Day" SelectedItemBinding="{Binding DayOfWeek, Mode=TwoWay}" ItemsSource="{Binding Source={StaticResource DaysOfWeekEnum}}"/>-->
-                                        <DataGridTemplateColumn Header="Day" >
+                                        <DataGridTemplateColumn Header="Day" Width="33*"  >
                                             <DataGridTemplateColumn.CellEditingTemplate>
                                                 <DataTemplate>
                                                     <ComboBox IsEditable="False" Text="{Binding DayOfWeek, Mode=TwoWay}"
@@ -218,8 +218,8 @@
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
 
-                                        <DataGridTextColumn Header="Start time" Binding="{Binding StartTime, Mode=TwoWay,  StringFormat= HH:mm}" EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
-                                        <DataGridTextColumn Header="End time" Binding="{Binding EndTime, Mode=TwoWay, StringFormat= HH:mm}" EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
+                                        <DataGridTextColumn Header="Start time" Width="33*" Binding="{Binding StartTime, Mode=TwoWay,  StringFormat= HH:mm}" EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
+                                        <DataGridTextColumn Header="End time" Width="33*" Binding="{Binding EndTime, Mode=TwoWay, StringFormat= HH:mm}" EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
 
                                         <DataGridTemplateColumn Header="Delete"  Width="80">
                                             <DataGridTemplateColumn.CellTemplate>
@@ -315,7 +315,7 @@
                         </Grid.RowDefinitions>
 
                         <ComboBox x:Name="CboSkills" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5" materialDesign:HintAssist.Hint="Select skill" Style="{StaticResource MaterialDesignFloatingHintComboBox}"  
-                                  ItemsSource="{x:Static local:MainWindow.Skills}" DisplayMemberPath="Name" SelectionChanged="CboSkills_SelectionChanged"/>
+                                  ItemsSource="{x:Static local:MainWindow.Skills}" DisplayMemberPath="Name"/>
                         <Button x:Name="BtnRefreshPlot" Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="6"  Content="{materialDesign:PackIcon Refresh}" HorizontalAlignment="Left" VerticalAlignment="Center" Click="BtnRefreshPlot_Click" />
 
 

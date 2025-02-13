@@ -53,11 +53,6 @@ namespace Ranger
 
         public AvailabilityWindow(DaysOfWeek dayOfWeek, TimeOnly startTime, TimeOnly endTime)
         {
-            if(!Enum.IsDefined(typeof(DaysOfWeek), dayOfWeek))
-            {
-                throw new ArgumentNullException("Invalid day of week.");
-            }
-
             DayOfWeek = dayOfWeek;
             StartTime = startTime;
             EndTime = endTime;
