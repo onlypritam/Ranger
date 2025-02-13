@@ -24,12 +24,14 @@ namespace Ranger
         Rectangle[] saturdayRects;
         Rectangle[] sundayRects;
 
+        Color[] colors;
+
         const int MaxHours = 24;
 
         private static Resource? SelectedResource;
         private static string? FilePath;
 
-        private string DefaultTitle = "Ranger (v 0.1)"; 
+        private string DefaultTitle = "Ranger (v 0.1)";
         private string NewTitle = "<New>";
 
         public static bool HasChanges { get; set; }
@@ -44,6 +46,7 @@ namespace Ranger
 
             HasChanges = false;
             CreateRectArray();
+            CreateColorPalatte();
             PlotCoverageUI(null);
             SetDefaultWindow();
         }
@@ -66,7 +69,7 @@ namespace Ranger
                     Util.SerializeObject(inputFile, FilePath);
                     this.Title = DefaultTitle + " " + FilePath;
                     HasChanges = false;
-                }   
+                }
             }
             catch (Exception ex)
             {
@@ -104,7 +107,7 @@ namespace Ranger
         {
             try
             {
-                if (HasChanges == true &&  MessageBox.Show("If you have any unsaved changes, you will loose all of them. Continue?", "Save changes", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                if (HasChanges == true && MessageBox.Show("If you have any unsaved changes, you will loose all of them. Continue?", "Save changes", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 {
                     return;
                 }
@@ -331,7 +334,7 @@ namespace Ranger
             {
                 if (SelectedResource is not null)
                 {
-                    if(SelectedResource.AvailabilityWindows.Count >= 7)
+                    if (SelectedResource.AvailabilityWindows.Count >= 7)
                     {
                         throw new InvalidOperationException("There can be max 7 shift for a resource, 1 for each day of week.");
                     }
@@ -364,10 +367,10 @@ namespace Ranger
             }
         }
         #endregion
-      
+
         private void ShowError(string errorMsg)
         {
-            MessageBox.Show($"An Error has occured: {errorMsg}","Oops!", MessageBoxButton.OK,MessageBoxImage.Error);
+            MessageBox.Show($"An Error has occured: {errorMsg}", "Oops!", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -376,7 +379,7 @@ namespace Ranger
             {
                 if (HasChanges == true && MessageBox.Show("If you have any unsaved changes, you will loose all of them. Continue?", "Save changes", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 {
-                   e.Cancel = true;
+                    e.Cancel = true;
                 }
             }
             catch (Exception ex)
@@ -415,7 +418,7 @@ namespace Ranger
 
                     LinkedListNode<string> currentNode = daysList.Find(aw.DayOfWeek.ToString());
                     LinkedListNode<string> nextNode = currentNode.Next ?? daysList.First;
-                    _=Enum.TryParse<DaysOfWeek>(nextNode.Value, out nextDay);
+                    _ = Enum.TryParse<DaysOfWeek>(nextNode.Value, out nextDay);
 
                     //next day found, now plot
                     for (int i = 0; i < aw.EndTime.Hour; i++)
@@ -456,11 +459,11 @@ namespace Ranger
                             {
                                 aw = res.AvailabilityWindows.SingleOrDefault(x => x.DayOfWeek == day);
                             }
-                            catch (System.InvalidOperationException)
+                            catch (System.InvalidOperationException ex)
                             {
-                                ShowError("Duplicate shift found for resource " + res.Name);
+                                throw new Exception("Duplicate shift found for resource " + res.Name, ex);
                             }
-                            
+
                             PlotCoverage(aw);
                         }
                     }
@@ -478,7 +481,7 @@ namespace Ranger
         {
             try
             {
-                if(plot is null) //clean the UI bars
+                if (plot is null) //clean the UI bars
                 {
                     for (int i = 0; i < MaxHours; i++)
                     {
@@ -508,25 +511,25 @@ namespace Ranger
                 {
                     for (int i = 0; i < MaxHours; i++)
                     {
-                        mondayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Mon][i], 0, Resources.Count));
+                        mondayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Mon][i], Resources.Count));
                         mondayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Mon][i] };
 
-                        tuesdayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Tue][i], 0, Resources.Count));
+                        tuesdayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Tue][i], Resources.Count));
                         tuesdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Tue][i] };
 
-                        wednesdayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Wed][i], 0, Resources.Count));
+                        wednesdayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Wed][i], Resources.Count));
                         wednesdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Wed][i] };
 
-                        thursdayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Thu][i], 0, Resources.Count));
+                        thursdayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Thu][i], Resources.Count));
                         thursdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Thu][i] };
 
-                        fridayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Fri][i], 0, Resources.Count));
+                        fridayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Fri][i], Resources.Count));
                         fridayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Fri][i] };
 
-                        saturdayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Sat][i], 0, Resources.Count));
+                        saturdayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Sat][i], Resources.Count));
                         saturdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Sat][i] };
 
-                        sundayRects[i].Fill = new SolidColorBrush(GetHeatMapColor(DayOfWeekCoverage[DaysOfWeek.Sun][i], 0, Resources.Count));
+                        sundayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Sun][i], Resources.Count));
                         sundayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Sun][i] };
                     }
                 }
@@ -537,50 +540,20 @@ namespace Ranger
             }
         }
 
-        private Color GetHeatMapColor(double value, double min, double max)
+        private Color GetHMColor(int value, int maxValue)
         {
-            Color firstColour = Colors.LightSkyBlue; //LightSkyBlue
-            Color secondColour = Colors.RoyalBlue; //RoyalBlue
-
-            return LerpColor(value,firstColour,secondColour);
-
-            // Example: Take the RGB
-            //135-206-250 // Light Sky Blue
-            // 65-105-225 // Royal Blue
-            // 70-101-25 // Delta
-
-            int rOffset = Math.Max(firstColour.R, secondColour.R);
-            int gOffset = Math.Max(firstColour.G, secondColour.G);
-            int bOffset = Math.Max(firstColour.B, secondColour.B);
-
-            int deltaR = Math.Abs(firstColour.R - secondColour.R);
-            int deltaG = Math.Abs(firstColour.G - secondColour.G);
-            int deltaB = Math.Abs(firstColour.B - secondColour.B);
-
-            double deniminator = (max - min);
-            if (deniminator == 0)
+            try
             {
-                deniminator = 1; // to avoid divid by 0 error
+                if (value <= 0) return colors[0]; //preventing divide by 0 error
+                float res = (colors.Length / (float)maxValue) * value;
+                return (colors[(int)Math.Round(res)]);
             }
-            double val = (value - min) / deniminator;
-            int r = rOffset - Convert.ToByte(deltaR * (1 - val));
-            int g = gOffset - Convert.ToByte(deltaG * (1 - val));
-            int b = bOffset - Convert.ToByte(deltaB * (1 - val));
-
-            return Color.FromArgb(255, (byte)r, (byte)g, (byte)b);
+            catch (Exception ex)
+            {
+                ShowError(ex.Message);
+                return Colors.Transparent; // Return a default color in case of an error
+            }
         }
-
-        public Color LerpColor(double value, Color startColor, Color endColor)
-        {
-            // reuse some code from the HeatMapColor
-
-            int r = (int)((endColor.R * value) + (startColor.R * (1 - value)));
-            int g = (int)((endColor.G * value) + (startColor.G * (1 - value)));
-            int b = (int)((endColor.B * value) + (startColor.B * (1 - value)));
-
-            return Color.FromArgb(255, (byte)r, (byte)g, (byte)b);
-        }
-
 
         private void CreateRectArray()
         {
@@ -765,6 +738,26 @@ namespace Ranger
             sundayRects[21] = SunRect21;
             sundayRects[22] = SunRect22;
             sundayRects[23] = SunRect23;
+        }
+
+        private void CreateColorPalatte()
+        {
+            colors = new Color[15];
+            colors[0] = (Color)ColorConverter.ConvertFromString("#eafff0");
+            colors[1] = (Color)ColorConverter.ConvertFromString("#c9f2e4");
+            colors[2] = (Color)ColorConverter.ConvertFromString("#a7e3d7");
+            colors[3] = (Color)ColorConverter.ConvertFromString("#85d5ca");
+            colors[4] = (Color)ColorConverter.ConvertFromString("#6cc5c1");
+            colors[5] = (Color)ColorConverter.ConvertFromString("#59b4b9");
+            colors[6] = (Color)ColorConverter.ConvertFromString("#45a2b1");
+            colors[7] = (Color)ColorConverter.ConvertFromString("#2f91aa");
+            colors[8] = (Color)ColorConverter.ConvertFromString("#2780a0");
+            colors[9] = (Color)ColorConverter.ConvertFromString("#246e95");
+            colors[10] = (Color)ColorConverter.ConvertFromString("#1d4c80");
+            colors[11] = (Color)ColorConverter.ConvertFromString("#1d3b77");
+            colors[12] = (Color)ColorConverter.ConvertFromString("#1b2a6d");
+            colors[13] = (Color)ColorConverter.ConvertFromString("#1a1662");
+            colors[14] = (Color)ColorConverter.ConvertFromString("#180054");
         }
     }
 }
