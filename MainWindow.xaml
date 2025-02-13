@@ -203,7 +203,7 @@
 
                                 <DataGrid x:Name="DgShiftAllocation" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="8" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" >
                                     <DataGrid.Columns>
-                                        <!--<DataGridComboBoxColumn Header="Day" SelectedItemBinding="{Binding DayOfWeek, Mode=TwoWay}" ItemsSource="{Binding Source={StaticResource DaysOfWeekEnum}}"/>-->
+                                        <DataGridCheckBoxColumn Header="Active" Width="80" Binding="{Binding Active, Mode=TwoWay}" EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"/>
                                         <DataGridTemplateColumn Header="Day" Width="33*"  >
                                             <DataGridTemplateColumn.CellEditingTemplate>
                                                 <DataTemplate>

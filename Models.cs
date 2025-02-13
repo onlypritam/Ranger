@@ -56,6 +56,7 @@ namespace Ranger
             DayOfWeek = dayOfWeek;
             StartTime = startTime;
             EndTime = endTime;
+            Active = true;
         }
 
         public string Id { get; } = Guid.NewGuid().ToString();
@@ -89,6 +90,8 @@ namespace Ranger
                 OnPropertyChanged();
             }
         }
+
+        public bool Active { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

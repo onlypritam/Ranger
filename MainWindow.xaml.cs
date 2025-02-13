@@ -15,7 +15,7 @@ namespace Ranger
         public static ObservableCollection<Skill> Skills = new ObservableCollection<Skill>();
         public static ObservableCollection<Resource> Resources = new ObservableCollection<Resource>();
 
-        Dictionary<DaysOfWeek, int[]> DayOfWeekCoverage;
+        Dictionary<DaysOfWeek, int[]> DayOfWeekCoverage; //TODO: save the name of the engineer along with count.
         Rectangle[] mondayRects;
         Rectangle[] tuesdayRects;
         Rectangle[] wednesdayRects;
@@ -331,6 +331,11 @@ namespace Ranger
             {
                 if (SelectedResource is not null)
                 {
+                    if(SelectedResource.AvailabilityWindows.Count >= 7)
+                    {
+                        throw new InvalidOperationException("There can be max 7 shift for a resource, 1 for each day of week.");
+                    }
+
                     SelectedResource.AvailabilityWindows.Add(new AvailabilityWindow(DaysOfWeek.Mon, TimeOnly.MinValue, TimeOnly.MinValue));
                     HasChanges = true;
                 }
@@ -384,7 +389,7 @@ namespace Ranger
         {
             try
             {
-                if (aw is null)
+                if (aw is null || !aw.Active)
                 {
                     return;
                 }
