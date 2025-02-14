@@ -128,14 +128,22 @@ namespace Ranger
                     {
                         Engineers.Clear();
                         Skills.Clear();
-                        foreach (var resource in inputFile.Resources)
-                        {
-                            Engineers.Add(resource);
-                        }
 
                         foreach (var skill in inputFile.Skills)
                         {
                             Skills.Add(skill);
+                        }
+
+                        foreach (var resource in inputFile.Resources)
+                        {
+                            foreach(Skill skl in resource.Skills)
+                            {
+                                if(!Skills.Any(x => x.Id == skl.Id) || !Skills.Any(x => x.Name == skl.Name))
+                                {
+                                    MessageBox.Show(resource.Name + " is mapped to a stale skill " + skl.Name + ". Please remove and re-add these skills to fix the issue.", "Stale skill found", MessageBoxButton.OK);
+                                }
+                            }
+                            Engineers.Add(resource);
                         }
 
                         this.Title = DefaultTitle + " " + FilePath;
@@ -195,8 +203,17 @@ namespace Ranger
         {
             try
             {
-                HasChanges = true;
                 Skill skill = (Skill)((System.Windows.Controls.Button)e.Source).DataContext;
+
+                foreach (var resource in Engineers)
+                {
+                    if(resource.Skills.Any(x => x.Id == skill.Id))
+                    {
+                        throw new InvalidOperationException("This skill is mapped to user " + resource.Name + ". Please remove this skill from all resources before deleting it.");
+                    }
+                }
+
+                HasChanges = true;
                 Skills.Remove(skill);
             }
             catch (Exception ex)
@@ -297,7 +314,7 @@ namespace Ranger
 
                 Skill selectedSkill = (Skill)DgSkills.SelectedItem;
 
-                if (SelectedResource.Skills.Contains(selectedSkill))
+                if (SelectedResource.Skills.Any(x => x.Name == selectedSkill.Name || x.Id == selectedSkill.Id))
                 {
                     throw new InvalidOperationException("The selected skill is already mapped to the selected resource.");
                 }

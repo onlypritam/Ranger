@@ -10,18 +10,28 @@ namespace Ranger
     {
         private string name;
 
-        public Resource(string name)
+        public Resource(string name, string id = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentNullException("Invalid resource name.");
             }
             Name = name;
+
+            if (id is null)
+            {
+                Id = Guid.NewGuid().ToString();
+            }
+            else
+            {
+                Id = id;
+            }
+
             Skills = new ObservableCollection<Skill>();
             AvailabilityWindows = new ObservableCollection<AvailabilityWindow>();
         }
 
-        public string Id { get; } = Guid.NewGuid().ToString();
+        public string Id { get; private set; }
 
         public string Name
         {
@@ -107,13 +117,22 @@ namespace Ranger
     {
         private string name;
 
-        public Skill(string name)
+        public Skill(string name, string id = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentNullException("Invalid skill name.");
             }
             Name = name;
+
+            if (id is null)
+            {
+                Id = Guid.NewGuid().ToString();
+            }
+            else
+            {
+                Id = id;
+            }
         }
 
         public string Id { get; } = Guid.NewGuid().ToString();
