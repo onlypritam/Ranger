@@ -50,40 +50,34 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height = "60" />
+            <RowDefinition Height = "40" />
             <RowDefinition Height = "*" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="10" />
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height = "10" />
                 <RowDefinition Height = "40" />
-                <RowDefinition Height = "10" />
             </Grid.RowDefinitions>
 
-            <Button x:Name="BtnNew" Grid.Row="1" Grid.Column="1"  Content="{materialDesign:PackIcon FilePlusOutline}" HorizontalAlignment="Center" Click="BtnNew_Click" ToolTip="New simulation"/>
-            <Button x:Name="BtnSelectFile" Grid.Row="1" Grid.Column="3"  Content="{materialDesign:PackIcon FolderOpenOutline}" HorizontalAlignment="Center" Click="BtnSelectFile_Click" ToolTip="Open file"/>
-            <Button x:Name="BtnSaveFile" Grid.Row="1" Grid.Column="5"  Content="{materialDesign:PackIcon ContentSaveOutline}" HorizontalAlignment="Center" VerticalAlignment="Center" Click="BtnSaveFile_Click" ToolTip="Save"/>
-            <Button x:Name="BtnSaveFileAs" Grid.Row="1" Grid.Column="7"  Content="{materialDesign:PackIcon ContentSavePlusOutline}" HorizontalAlignment="Center" VerticalAlignment="Center" Click="BtnSaveFileAs_Click" ToolTip="Save as"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+                <Menu Grid.Row="1" Grid.Column="10" HorizontalAlignment="Left">
+                    <MenuItem Header="_File">
+                        <MenuItem Header="New" Icon="{materialDesign:PackIcon Kind=FilePlusOutline}" Click="BtnNew_Click"/>
+                        <MenuItem Header="Open" Icon="{materialDesign:PackIcon Kind=FolderOpenOutline}" Click="BtnSelectFile_Click"/>
+                        <MenuItem Header="Save" Icon="{materialDesign:PackIcon Kind=ContentSaveOutline}" Click="BtnSaveFile_Click"/>
+                        <MenuItem Header="Save As.." Icon="{materialDesign:PackIcon Kind=ContentSavePlusOutline}" Click="BtnSaveFileAs_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="_Help">
+                        <MenuItem Header="About" Icon="{materialDesign:PackIcon Kind=InformationOutline}" Click="About_Click"/>
+                    </MenuItem>
+                </Menu>
+            </StackPanel>
         </Grid>
 
         <TabControl HorizontalContentAlignment="Left" 
@@ -114,8 +108,8 @@
                     <Button x:Name="BtnCopyResource" Grid.Row="1" Grid.Column="3"  Content="{materialDesign:PackIcon ContentCopy}" HorizontalAlignment="Right" VerticalAlignment="Center" Click="BtnCopyResource_Click" Margin="0,0,55,0" ToolTip="Copy resource." />
 
 
-                    <TextBlock Text="Skill" Style="{StaticResource HeaderTextBlockStyle}" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <TextBlock Text="Resource" Style="{StaticResource HeaderTextBlockStyle}" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBlock Text="Skill" Style="{StaticResource HeaderTextBlockStyle}" Foreground="{DynamicResource PrimaryHueDarkBrush}" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBlock Text="Resource" Style="{StaticResource HeaderTextBlockStyle}" Foreground="{DynamicResource PrimaryHueDarkBrush}" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
 
                     <DataGrid x:Name="DgSkills" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="1"  AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single">
@@ -164,7 +158,7 @@
                                 </Grid.RowDefinitions>
 
                                 <Button x:Name="BtnMapResourceSkill" Grid.Row="1" Grid.Column="2"  Content="{materialDesign:PackIcon PlusBox}" HorizontalAlignment="Right" VerticalAlignment="Center" Click="BtnMapResourceSkill_Click"/>
-                                <TextBlock Text="Skill assignment" Style="{StaticResource HeaderTextBlockStyle}" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <TextBlock Text="Skill assignment" Style="{StaticResource HeaderTextBlockStyle}" Foreground="{DynamicResource PrimaryHueDarkBrush}" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
                                 <DataGrid x:Name="DgResourcesSkillMap" Grid.Row="2" Grid.Column="1"  AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" Grid.ColumnSpan="2">
                                     <DataGrid.Columns>
@@ -199,7 +193,7 @@
                                 </Grid.RowDefinitions>
 
                                 <Button x:Name="BtnAllocateShift" Grid.Row="1" Grid.Column="2"  Content="{materialDesign:PackIcon PlusBox}" HorizontalAlignment="Right" VerticalAlignment="Center" Click="BtnAllocateShift_Click"/>
-                                <TextBlock Text="Shift allocation" Style="{StaticResource HeaderTextBlockStyle}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <TextBlock Text="Shift allocation" Style="{StaticResource HeaderTextBlockStyle}" Foreground="{DynamicResource PrimaryHueDarkBrush}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
                                 <DataGrid x:Name="DgShiftAllocation" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="8" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" >
                                     <DataGrid.Columns>
@@ -354,183 +348,180 @@
                         <TextBlock Text="Sun - " Grid.Row="19" Grid.Column="1" HorizontalAlignment="Left" Style="{StaticResource NormalTextBlockStyle}"/>
 
 
-                        <Rectangle x:Name="MonRect0" Grid.Row="7" Grid.Column="2" Fill="Red" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
-                        <Rectangle x:Name="MonRect1" Grid.Row="7" Grid.Column="3" Fill="Red" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
-                        <Rectangle x:Name="MonRect2" Grid.Row="7" Grid.Column="4" Fill="Red" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
-                        <Rectangle x:Name="MonRect3" Grid.Row="7" Grid.Column="5" Fill="Red" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
-                        <Rectangle x:Name="MonRect4" Grid.Row="7" Grid.Column="6" Fill="Red" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
-                        <Rectangle x:Name="MonRect5" Grid.Row="7" Grid.Column="7" Fill="Red" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
-                        <Rectangle x:Name="MonRect6" Grid.Row="7" Grid.Column="8" Fill="Red" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
-                        <Rectangle x:Name="MonRect7" Grid.Row="7" Grid.Column="9" Fill="Red" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
-                        <Rectangle x:Name="MonRect8" Grid.Row="7" Grid.Column="10" Fill="Red" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
-                        <Rectangle x:Name="MonRect9" Grid.Row="7" Grid.Column="11" Fill="Red" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
-                        <Rectangle x:Name="MonRect10" Grid.Row="7" Grid.Column="12" Fill="Red" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
-                        <Rectangle x:Name="MonRect11" Grid.Row="7" Grid.Column="13" Fill="Red" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
-                        <Rectangle x:Name="MonRect12" Grid.Row="7" Grid.Column="14" Fill="Red" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
-                        <Rectangle x:Name="MonRect13" Grid.Row="7" Grid.Column="15" Fill="Red" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
-                        <Rectangle x:Name="MonRect14" Grid.Row="7" Grid.Column="16" Fill="Red" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
-                        <Rectangle x:Name="MonRect15" Grid.Row="7" Grid.Column="17" Fill="Red" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
-                        <Rectangle x:Name="MonRect16" Grid.Row="7" Grid.Column="18" Fill="Red" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
-                        <Rectangle x:Name="MonRect17" Grid.Row="7" Grid.Column="19" Fill="Red" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
-                        <Rectangle x:Name="MonRect18" Grid.Row="7" Grid.Column="20" Fill="Red" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
-                        <Rectangle x:Name="MonRect19" Grid.Row="7" Grid.Column="21" Fill="Red" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
-                        <Rectangle x:Name="MonRect20" Grid.Row="7" Grid.Column="22" Fill="Red" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
-                        <Rectangle x:Name="MonRect21" Grid.Row="7" Grid.Column="23" Fill="Red" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
-                        <Rectangle x:Name="MonRect22" Grid.Row="7" Grid.Column="24" Fill="Red" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
-                        <Rectangle x:Name="MonRect23" Grid.Row="7" Grid.Column="25" Fill="Red" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
+                        <Rectangle x:Name="MonRect0" Grid.Row="7" Grid.Column="2" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
+                        <Rectangle x:Name="MonRect1" Grid.Row="7" Grid.Column="3" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
+                        <Rectangle x:Name="MonRect2" Grid.Row="7" Grid.Column="4" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
+                        <Rectangle x:Name="MonRect3" Grid.Row="7" Grid.Column="5" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
+                        <Rectangle x:Name="MonRect4" Grid.Row="7" Grid.Column="6" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
+                        <Rectangle x:Name="MonRect5" Grid.Row="7" Grid.Column="7" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
+                        <Rectangle x:Name="MonRect6" Grid.Row="7" Grid.Column="8" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
+                        <Rectangle x:Name="MonRect7" Grid.Row="7" Grid.Column="9" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
+                        <Rectangle x:Name="MonRect8" Grid.Row="7" Grid.Column="10" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
+                        <Rectangle x:Name="MonRect9" Grid.Row="7" Grid.Column="11" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
+                        <Rectangle x:Name="MonRect10" Grid.Row="7" Grid.Column="12" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
+                        <Rectangle x:Name="MonRect11" Grid.Row="7" Grid.Column="13" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
+                        <Rectangle x:Name="MonRect12" Grid.Row="7" Grid.Column="14" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
+                        <Rectangle x:Name="MonRect13" Grid.Row="7" Grid.Column="15" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
+                        <Rectangle x:Name="MonRect14" Grid.Row="7" Grid.Column="16" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
+                        <Rectangle x:Name="MonRect15" Grid.Row="7" Grid.Column="17" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
+                        <Rectangle x:Name="MonRect16" Grid.Row="7" Grid.Column="18" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
+                        <Rectangle x:Name="MonRect17" Grid.Row="7" Grid.Column="19" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
+                        <Rectangle x:Name="MonRect18" Grid.Row="7" Grid.Column="20" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
+                        <Rectangle x:Name="MonRect19" Grid.Row="7" Grid.Column="21" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
+                        <Rectangle x:Name="MonRect20" Grid.Row="7" Grid.Column="22" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
+                        <Rectangle x:Name="MonRect21" Grid.Row="7" Grid.Column="23" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
+                        <Rectangle x:Name="MonRect22" Grid.Row="7" Grid.Column="24" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
+                        <Rectangle x:Name="MonRect23" Grid.Row="7" Grid.Column="25" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
 
-                        <Rectangle x:Name="TueRect0" Grid.Row="9" Grid.Column="2" Fill="Red" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
-                        <Rectangle x:Name="TueRect1" Grid.Row="9" Grid.Column="3" Fill="Red" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
-                        <Rectangle x:Name="TueRect2" Grid.Row="9" Grid.Column="4" Fill="Red" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
-                        <Rectangle x:Name="TueRect3" Grid.Row="9" Grid.Column="5" Fill="Red" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
-                        <Rectangle x:Name="TueRect4" Grid.Row="9" Grid.Column="6" Fill="Red" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
-                        <Rectangle x:Name="TueRect5" Grid.Row="9" Grid.Column="7" Fill="Red" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
-                        <Rectangle x:Name="TueRect6" Grid.Row="9" Grid.Column="8" Fill="Red" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
-                        <Rectangle x:Name="TueRect7" Grid.Row="9" Grid.Column="9" Fill="Red" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
-                        <Rectangle x:Name="TueRect8" Grid.Row="9" Grid.Column="10" Fill="Red" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
-                        <Rectangle x:Name="TueRect9" Grid.Row="9" Grid.Column="11" Fill="Red" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
-                        <Rectangle x:Name="TueRect10" Grid.Row="9" Grid.Column="12" Fill="Red" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
-                        <Rectangle x:Name="TueRect11" Grid.Row="9" Grid.Column="13" Fill="Red" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
-                        <Rectangle x:Name="TueRect12" Grid.Row="9" Grid.Column="14" Fill="Red" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
-                        <Rectangle x:Name="TueRect13" Grid.Row="9" Grid.Column="15" Fill="Red" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
-                        <Rectangle x:Name="TueRect14" Grid.Row="9" Grid.Column="16" Fill="Red" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
-                        <Rectangle x:Name="TueRect15" Grid.Row="9" Grid.Column="17" Fill="Red" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
-                        <Rectangle x:Name="TueRect16" Grid.Row="9" Grid.Column="18" Fill="Red" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
-                        <Rectangle x:Name="TueRect17" Grid.Row="9" Grid.Column="19" Fill="Red" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
-                        <Rectangle x:Name="TueRect18" Grid.Row="9" Grid.Column="20" Fill="Red" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
-                        <Rectangle x:Name="TueRect19" Grid.Row="9" Grid.Column="21" Fill="Red" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
-                        <Rectangle x:Name="TueRect20" Grid.Row="9" Grid.Column="22" Fill="Red" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
-                        <Rectangle x:Name="TueRect21" Grid.Row="9" Grid.Column="23" Fill="Red" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
-                        <Rectangle x:Name="TueRect22" Grid.Row="9" Grid.Column="24" Fill="Red" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
-                        <Rectangle x:Name="TueRect23" Grid.Row="9" Grid.Column="25" Fill="Red" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
+                        <Rectangle x:Name="TueRect0" Grid.Row="9" Grid.Column="2" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
+                        <Rectangle x:Name="TueRect1" Grid.Row="9" Grid.Column="3" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
+                        <Rectangle x:Name="TueRect2" Grid.Row="9" Grid.Column="4" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
+                        <Rectangle x:Name="TueRect3" Grid.Row="9" Grid.Column="5" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
+                        <Rectangle x:Name="TueRect4" Grid.Row="9" Grid.Column="6" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
+                        <Rectangle x:Name="TueRect5" Grid.Row="9" Grid.Column="7" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
+                        <Rectangle x:Name="TueRect6" Grid.Row="9" Grid.Column="8" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
+                        <Rectangle x:Name="TueRect7" Grid.Row="9" Grid.Column="9" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
+                        <Rectangle x:Name="TueRect8" Grid.Row="9" Grid.Column="10" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
+                        <Rectangle x:Name="TueRect9" Grid.Row="9" Grid.Column="11" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
+                        <Rectangle x:Name="TueRect10" Grid.Row="9" Grid.Column="12" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
+                        <Rectangle x:Name="TueRect11" Grid.Row="9" Grid.Column="13" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
+                        <Rectangle x:Name="TueRect12" Grid.Row="9" Grid.Column="14" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
+                        <Rectangle x:Name="TueRect13" Grid.Row="9" Grid.Column="15" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
+                        <Rectangle x:Name="TueRect14" Grid.Row="9" Grid.Column="16" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
+                        <Rectangle x:Name="TueRect15" Grid.Row="9" Grid.Column="17" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
+                        <Rectangle x:Name="TueRect16" Grid.Row="9" Grid.Column="18" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
+                        <Rectangle x:Name="TueRect17" Grid.Row="9" Grid.Column="19" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
+                        <Rectangle x:Name="TueRect18" Grid.Row="9" Grid.Column="20" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
+                        <Rectangle x:Name="TueRect19" Grid.Row="9" Grid.Column="21" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
+                        <Rectangle x:Name="TueRect20" Grid.Row="9" Grid.Column="22" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
+                        <Rectangle x:Name="TueRect21" Grid.Row="9" Grid.Column="23" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
+                        <Rectangle x:Name="TueRect22" Grid.Row="9" Grid.Column="24" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
+                        <Rectangle x:Name="TueRect23" Grid.Row="9" Grid.Column="25" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
 
-                        <Rectangle x:Name="WedRect0" Grid.Row="11" Grid.Column="2" Fill="Red" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
-                        <Rectangle x:Name="WedRect1" Grid.Row="11" Grid.Column="3" Fill="Red" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
-                        <Rectangle x:Name="WedRect2" Grid.Row="11" Grid.Column="4" Fill="Red" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
-                        <Rectangle x:Name="WedRect3" Grid.Row="11" Grid.Column="5" Fill="Red" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
-                        <Rectangle x:Name="WedRect4" Grid.Row="11" Grid.Column="6" Fill="Red" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
-                        <Rectangle x:Name="WedRect5" Grid.Row="11" Grid.Column="7" Fill="Red" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
-                        <Rectangle x:Name="WedRect6" Grid.Row="11" Grid.Column="8" Fill="Red" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
-                        <Rectangle x:Name="WedRect7" Grid.Row="11" Grid.Column="9" Fill="Red" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
-                        <Rectangle x:Name="WedRect8" Grid.Row="11" Grid.Column="10" Fill="Red" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
-                        <Rectangle x:Name="WedRect9" Grid.Row="11" Grid.Column="11" Fill="Red" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
-                        <Rectangle x:Name="WedRect10" Grid.Row="11" Grid.Column="12" Fill="Red" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
-                        <Rectangle x:Name="WedRect11" Grid.Row="11" Grid.Column="13" Fill="Red" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
-                        <Rectangle x:Name="WedRect12" Grid.Row="11" Grid.Column="14" Fill="Red" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
-                        <Rectangle x:Name="WedRect13" Grid.Row="11" Grid.Column="15" Fill="Red" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
-                        <Rectangle x:Name="WedRect14" Grid.Row="11" Grid.Column="16" Fill="Red" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
-                        <Rectangle x:Name="WedRect15" Grid.Row="11" Grid.Column="17" Fill="Red" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
-                        <Rectangle x:Name="WedRect16" Grid.Row="11" Grid.Column="18" Fill="Red" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
-                        <Rectangle x:Name="WedRect17" Grid.Row="11" Grid.Column="19" Fill="Red" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
-                        <Rectangle x:Name="WedRect18" Grid.Row="11" Grid.Column="20" Fill="Red" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
-                        <Rectangle x:Name="WedRect19" Grid.Row="11" Grid.Column="21" Fill="Red" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
-                        <Rectangle x:Name="WedRect20" Grid.Row="11" Grid.Column="22" Fill="Red" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
-                        <Rectangle x:Name="WedRect21" Grid.Row="11" Grid.Column="23" Fill="Red" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
-                        <Rectangle x:Name="WedRect22" Grid.Row="11" Grid.Column="24" Fill="Red" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
-                        <Rectangle x:Name="WedRect23" Grid.Row="11" Grid.Column="25" Fill="Red" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
+                        <Rectangle x:Name="WedRect0" Grid.Row="11" Grid.Column="2" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
+                        <Rectangle x:Name="WedRect1" Grid.Row="11" Grid.Column="3" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
+                        <Rectangle x:Name="WedRect2" Grid.Row="11" Grid.Column="4" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
+                        <Rectangle x:Name="WedRect3" Grid.Row="11" Grid.Column="5" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
+                        <Rectangle x:Name="WedRect4" Grid.Row="11" Grid.Column="6" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
+                        <Rectangle x:Name="WedRect5" Grid.Row="11" Grid.Column="7" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
+                        <Rectangle x:Name="WedRect6" Grid.Row="11" Grid.Column="8" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
+                        <Rectangle x:Name="WedRect7" Grid.Row="11" Grid.Column="9" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
+                        <Rectangle x:Name="WedRect8" Grid.Row="11" Grid.Column="10" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
+                        <Rectangle x:Name="WedRect9" Grid.Row="11" Grid.Column="11" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
+                        <Rectangle x:Name="WedRect10" Grid.Row="11" Grid.Column="12" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
+                        <Rectangle x:Name="WedRect11" Grid.Row="11" Grid.Column="13" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
+                        <Rectangle x:Name="WedRect12" Grid.Row="11" Grid.Column="14" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
+                        <Rectangle x:Name="WedRect13" Grid.Row="11" Grid.Column="15" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
+                        <Rectangle x:Name="WedRect14" Grid.Row="11" Grid.Column="16" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
+                        <Rectangle x:Name="WedRect15" Grid.Row="11" Grid.Column="17" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
+                        <Rectangle x:Name="WedRect16" Grid.Row="11" Grid.Column="18" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
+                        <Rectangle x:Name="WedRect17" Grid.Row="11" Grid.Column="19" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
+                        <Rectangle x:Name="WedRect18" Grid.Row="11" Grid.Column="20" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
+                        <Rectangle x:Name="WedRect19" Grid.Row="11" Grid.Column="21" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
+                        <Rectangle x:Name="WedRect20" Grid.Row="11" Grid.Column="22" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
+                        <Rectangle x:Name="WedRect21" Grid.Row="11" Grid.Column="23" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
+                        <Rectangle x:Name="WedRect22" Grid.Row="11" Grid.Column="24" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
+                        <Rectangle x:Name="WedRect23" Grid.Row="11" Grid.Column="25" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
 
-                        <Rectangle x:Name="ThuRect0" Grid.Row="13" Grid.Column="2" Fill="Red" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
-                        <Rectangle x:Name="ThuRect1" Grid.Row="13" Grid.Column="3" Fill="Red" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
-                        <Rectangle x:Name="ThuRect2" Grid.Row="13" Grid.Column="4" Fill="Red" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
-                        <Rectangle x:Name="ThuRect3" Grid.Row="13" Grid.Column="5" Fill="Red" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
-                        <Rectangle x:Name="ThuRect4" Grid.Row="13" Grid.Column="6" Fill="Red" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
-                        <Rectangle x:Name="ThuRect5" Grid.Row="13" Grid.Column="7" Fill="Red" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
-                        <Rectangle x:Name="ThuRect6" Grid.Row="13" Grid.Column="8" Fill="Red" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
-                        <Rectangle x:Name="ThuRect7" Grid.Row="13" Grid.Column="9" Fill="Red" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
-                        <Rectangle x:Name="ThuRect8" Grid.Row="13" Grid.Column="10" Fill="Red" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
-                        <Rectangle x:Name="ThuRect9" Grid.Row="13" Grid.Column="11" Fill="Red" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
-                        <Rectangle x:Name="ThuRect10" Grid.Row="13" Grid.Column="12" Fill="Red" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
-                        <Rectangle x:Name="ThuRect11" Grid.Row="13" Grid.Column="13" Fill="Red" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
-                        <Rectangle x:Name="ThuRect12" Grid.Row="13" Grid.Column="14" Fill="Red" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
-                        <Rectangle x:Name="ThuRect13" Grid.Row="13" Grid.Column="15" Fill="Red" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
-                        <Rectangle x:Name="ThuRect14" Grid.Row="13" Grid.Column="16" Fill="Red" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
-                        <Rectangle x:Name="ThuRect15" Grid.Row="13" Grid.Column="17" Fill="Red" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
-                        <Rectangle x:Name="ThuRect16" Grid.Row="13" Grid.Column="18" Fill="Red" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
-                        <Rectangle x:Name="ThuRect17" Grid.Row="13" Grid.Column="19" Fill="Red" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
-                        <Rectangle x:Name="ThuRect18" Grid.Row="13" Grid.Column="20" Fill="Red" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
-                        <Rectangle x:Name="ThuRect19" Grid.Row="13" Grid.Column="21" Fill="Red" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
-                        <Rectangle x:Name="ThuRect20" Grid.Row="13" Grid.Column="22" Fill="Red" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
-                        <Rectangle x:Name="ThuRect21" Grid.Row="13" Grid.Column="23" Fill="Red" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
-                        <Rectangle x:Name="ThuRect22" Grid.Row="13" Grid.Column="24" Fill="Red" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
-                        <Rectangle x:Name="ThuRect23" Grid.Row="13" Grid.Column="25" Fill="Red" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
+                        <Rectangle x:Name="ThuRect0" Grid.Row="13" Grid.Column="2" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
+                        <Rectangle x:Name="ThuRect1" Grid.Row="13" Grid.Column="3" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
+                        <Rectangle x:Name="ThuRect2" Grid.Row="13" Grid.Column="4" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
+                        <Rectangle x:Name="ThuRect3" Grid.Row="13" Grid.Column="5" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
+                        <Rectangle x:Name="ThuRect4" Grid.Row="13" Grid.Column="6" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
+                        <Rectangle x:Name="ThuRect5" Grid.Row="13" Grid.Column="7" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
+                        <Rectangle x:Name="ThuRect6" Grid.Row="13" Grid.Column="8" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
+                        <Rectangle x:Name="ThuRect7" Grid.Row="13" Grid.Column="9" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
+                        <Rectangle x:Name="ThuRect8" Grid.Row="13" Grid.Column="10" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
+                        <Rectangle x:Name="ThuRect9" Grid.Row="13" Grid.Column="11" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
+                        <Rectangle x:Name="ThuRect10" Grid.Row="13" Grid.Column="12" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
+                        <Rectangle x:Name="ThuRect11" Grid.Row="13" Grid.Column="13" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
+                        <Rectangle x:Name="ThuRect12" Grid.Row="13" Grid.Column="14" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
+                        <Rectangle x:Name="ThuRect13" Grid.Row="13" Grid.Column="15" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
+                        <Rectangle x:Name="ThuRect14" Grid.Row="13" Grid.Column="16" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
+                        <Rectangle x:Name="ThuRect15" Grid.Row="13" Grid.Column="17" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
+                        <Rectangle x:Name="ThuRect16" Grid.Row="13" Grid.Column="18" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
+                        <Rectangle x:Name="ThuRect17" Grid.Row="13" Grid.Column="19" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
+                        <Rectangle x:Name="ThuRect18" Grid.Row="13" Grid.Column="20" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
+                        <Rectangle x:Name="ThuRect19" Grid.Row="13" Grid.Column="21" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
+                        <Rectangle x:Name="ThuRect20" Grid.Row="13" Grid.Column="22" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
+                        <Rectangle x:Name="ThuRect21" Grid.Row="13" Grid.Column="23" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
+                        <Rectangle x:Name="ThuRect22" Grid.Row="13" Grid.Column="24" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
+                        <Rectangle x:Name="ThuRect23" Grid.Row="13" Grid.Column="25" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
 
-                        <Rectangle x:Name="FriRect0" Grid.Row="15" Grid.Column="2" Fill="Red" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
-                        <Rectangle x:Name="FriRect1" Grid.Row="15" Grid.Column="3" Fill="Red" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
-                        <Rectangle x:Name="FriRect2" Grid.Row="15" Grid.Column="4" Fill="Red" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
-                        <Rectangle x:Name="FriRect3" Grid.Row="15" Grid.Column="5" Fill="Red" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
-                        <Rectangle x:Name="FriRect4" Grid.Row="15" Grid.Column="6" Fill="Red" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
-                        <Rectangle x:Name="FriRect5" Grid.Row="15" Grid.Column="7" Fill="Red" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
-                        <Rectangle x:Name="FriRect6" Grid.Row="15" Grid.Column="8" Fill="Red" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
-                        <Rectangle x:Name="FriRect7" Grid.Row="15" Grid.Column="9" Fill="Red" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
-                        <Rectangle x:Name="FriRect8" Grid.Row="15" Grid.Column="10" Fill="Red" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
-                        <Rectangle x:Name="FriRect9" Grid.Row="15" Grid.Column="11" Fill="Red" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
-                        <Rectangle x:Name="FriRect10" Grid.Row="15" Grid.Column="12" Fill="Red" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
-                        <Rectangle x:Name="FriRect11" Grid.Row="15" Grid.Column="13" Fill="Red" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
-                        <Rectangle x:Name="FriRect12" Grid.Row="15" Grid.Column="14" Fill="Red" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
-                        <Rectangle x:Name="FriRect13" Grid.Row="15" Grid.Column="15" Fill="Red" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
-                        <Rectangle x:Name="FriRect14" Grid.Row="15" Grid.Column="16" Fill="Red" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
-                        <Rectangle x:Name="FriRect15" Grid.Row="15" Grid.Column="17" Fill="Red" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
-                        <Rectangle x:Name="FriRect16" Grid.Row="15" Grid.Column="18" Fill="Red" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
-                        <Rectangle x:Name="FriRect17" Grid.Row="15" Grid.Column="19" Fill="Red" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
-                        <Rectangle x:Name="FriRect18" Grid.Row="15" Grid.Column="20" Fill="Red" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
-                        <Rectangle x:Name="FriRect19" Grid.Row="15" Grid.Column="21" Fill="Red" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
-                        <Rectangle x:Name="FriRect20" Grid.Row="15" Grid.Column="22" Fill="Red" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
-                        <Rectangle x:Name="FriRect21" Grid.Row="15" Grid.Column="23" Fill="Red" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
-                        <Rectangle x:Name="FriRect22" Grid.Row="15" Grid.Column="24" Fill="Red" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
-                        <Rectangle x:Name="FriRect23" Grid.Row="15" Grid.Column="25" Fill="Red" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
+                        <Rectangle x:Name="FriRect0" Grid.Row="15" Grid.Column="2" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
+                        <Rectangle x:Name="FriRect1" Grid.Row="15" Grid.Column="3" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
+                        <Rectangle x:Name="FriRect2" Grid.Row="15" Grid.Column="4" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
+                        <Rectangle x:Name="FriRect3" Grid.Row="15" Grid.Column="5" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
+                        <Rectangle x:Name="FriRect4" Grid.Row="15" Grid.Column="6" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
+                        <Rectangle x:Name="FriRect5" Grid.Row="15" Grid.Column="7" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
+                        <Rectangle x:Name="FriRect6" Grid.Row="15" Grid.Column="8" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
+                        <Rectangle x:Name="FriRect7" Grid.Row="15" Grid.Column="9" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
+                        <Rectangle x:Name="FriRect8" Grid.Row="15" Grid.Column="10" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
+                        <Rectangle x:Name="FriRect9" Grid.Row="15" Grid.Column="11" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
+                        <Rectangle x:Name="FriRect10" Grid.Row="15" Grid.Column="12" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
+                        <Rectangle x:Name="FriRect11" Grid.Row="15" Grid.Column="13" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
+                        <Rectangle x:Name="FriRect12" Grid.Row="15" Grid.Column="14" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
+                        <Rectangle x:Name="FriRect13" Grid.Row="15" Grid.Column="15" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
+                        <Rectangle x:Name="FriRect14" Grid.Row="15" Grid.Column="16" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
+                        <Rectangle x:Name="FriRect15" Grid.Row="15" Grid.Column="17" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
+                        <Rectangle x:Name="FriRect16" Grid.Row="15" Grid.Column="18" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
+                        <Rectangle x:Name="FriRect17" Grid.Row="15" Grid.Column="19" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
+                        <Rectangle x:Name="FriRect18" Grid.Row="15" Grid.Column="20" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
+                        <Rectangle x:Name="FriRect19" Grid.Row="15" Grid.Column="21" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
+                        <Rectangle x:Name="FriRect20" Grid.Row="15" Grid.Column="22" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
+                        <Rectangle x:Name="FriRect21" Grid.Row="15" Grid.Column="23" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
+                        <Rectangle x:Name="FriRect22" Grid.Row="15" Grid.Column="24" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
+                        <Rectangle x:Name="FriRect23" Grid.Row="15" Grid.Column="25" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
 
-                        <Rectangle x:Name="SatRect0" Grid.Row="17" Grid.Column="2" Fill="Red" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
-                        <Rectangle x:Name="SatRect1" Grid.Row="17" Grid.Column="3" Fill="Red" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
-                        <Rectangle x:Name="SatRect2" Grid.Row="17" Grid.Column="4" Fill="Red" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
-                        <Rectangle x:Name="SatRect3" Grid.Row="17" Grid.Column="5" Fill="Red" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
-                        <Rectangle x:Name="SatRect4" Grid.Row="17" Grid.Column="6" Fill="Red" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
-                        <Rectangle x:Name="SatRect5" Grid.Row="17" Grid.Column="7" Fill="Red" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
-                        <Rectangle x:Name="SatRect6" Grid.Row="17" Grid.Column="8" Fill="Red" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
-                        <Rectangle x:Name="SatRect7" Grid.Row="17" Grid.Column="9" Fill="Red" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
-                        <Rectangle x:Name="SatRect8" Grid.Row="17" Grid.Column="10" Fill="Red" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
-                        <Rectangle x:Name="SatRect9" Grid.Row="17" Grid.Column="11" Fill="Red" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
-                        <Rectangle x:Name="SatRect10" Grid.Row="17" Grid.Column="12" Fill="Red" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
-                        <Rectangle x:Name="SatRect11" Grid.Row="17" Grid.Column="13" Fill="Red" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
-                        <Rectangle x:Name="SatRect12" Grid.Row="17" Grid.Column="14" Fill="Red" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
-                        <Rectangle x:Name="SatRect13" Grid.Row="17" Grid.Column="15" Fill="Red" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
-                        <Rectangle x:Name="SatRect14" Grid.Row="17" Grid.Column="16" Fill="Red" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
-                        <Rectangle x:Name="SatRect15" Grid.Row="17" Grid.Column="17" Fill="Red" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
-                        <Rectangle x:Name="SatRect16" Grid.Row="17" Grid.Column="18" Fill="Red" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
-                        <Rectangle x:Name="SatRect17" Grid.Row="17" Grid.Column="19" Fill="Red" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
-                        <Rectangle x:Name="SatRect18" Grid.Row="17" Grid.Column="20" Fill="Red" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
-                        <Rectangle x:Name="SatRect19" Grid.Row="17" Grid.Column="21" Fill="Red" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
-                        <Rectangle x:Name="SatRect20" Grid.Row="17" Grid.Column="22" Fill="Red" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
-                        <Rectangle x:Name="SatRect21" Grid.Row="17" Grid.Column="23" Fill="Red" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
-                        <Rectangle x:Name="SatRect22" Grid.Row="17" Grid.Column="24" Fill="Red" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
-                        <Rectangle x:Name="SatRect23" Grid.Row="17" Grid.Column="25" Fill="Red" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
+                        <Rectangle x:Name="SatRect0" Grid.Row="17" Grid.Column="2" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
+                        <Rectangle x:Name="SatRect1" Grid.Row="17" Grid.Column="3" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
+                        <Rectangle x:Name="SatRect2" Grid.Row="17" Grid.Column="4" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
+                        <Rectangle x:Name="SatRect3" Grid.Row="17" Grid.Column="5" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
+                        <Rectangle x:Name="SatRect4" Grid.Row="17" Grid.Column="6" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
+                        <Rectangle x:Name="SatRect5" Grid.Row="17" Grid.Column="7" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
+                        <Rectangle x:Name="SatRect6" Grid.Row="17" Grid.Column="8" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
+                        <Rectangle x:Name="SatRect7" Grid.Row="17" Grid.Column="9" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
+                        <Rectangle x:Name="SatRect8" Grid.Row="17" Grid.Column="10" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
+                        <Rectangle x:Name="SatRect9" Grid.Row="17" Grid.Column="11" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
+                        <Rectangle x:Name="SatRect10" Grid.Row="17" Grid.Column="12" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
+                        <Rectangle x:Name="SatRect11" Grid.Row="17" Grid.Column="13" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
+                        <Rectangle x:Name="SatRect12" Grid.Row="17" Grid.Column="14" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
+                        <Rectangle x:Name="SatRect13" Grid.Row="17" Grid.Column="15" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
+                        <Rectangle x:Name="SatRect14" Grid.Row="17" Grid.Column="16" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
+                        <Rectangle x:Name="SatRect15" Grid.Row="17" Grid.Column="17" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
+                        <Rectangle x:Name="SatRect16" Grid.Row="17" Grid.Column="18" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
+                        <Rectangle x:Name="SatRect17" Grid.Row="17" Grid.Column="19" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
+                        <Rectangle x:Name="SatRect18" Grid.Row="17" Grid.Column="20" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
+                        <Rectangle x:Name="SatRect19" Grid.Row="17" Grid.Column="21" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
+                        <Rectangle x:Name="SatRect20" Grid.Row="17" Grid.Column="22" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
+                        <Rectangle x:Name="SatRect21" Grid.Row="17" Grid.Column="23" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
+                        <Rectangle x:Name="SatRect22" Grid.Row="17" Grid.Column="24" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
+                        <Rectangle x:Name="SatRect23" Grid.Row="17" Grid.Column="25" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
 
-                        <Rectangle x:Name="SunRect0" Grid.Row="19" Grid.Column="2" Fill="Red" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
-                        <Rectangle x:Name="SunRect1" Grid.Row="19" Grid.Column="3" Fill="Red" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
-                        <Rectangle x:Name="SunRect2" Grid.Row="19" Grid.Column="4" Fill="Red" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
-                        <Rectangle x:Name="SunRect3" Grid.Row="19" Grid.Column="5" Fill="Red" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
-                        <Rectangle x:Name="SunRect4" Grid.Row="19" Grid.Column="6" Fill="Red" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
-                        <Rectangle x:Name="SunRect5" Grid.Row="19" Grid.Column="7" Fill="Red" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
-                        <Rectangle x:Name="SunRect6" Grid.Row="19" Grid.Column="8" Fill="Red" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
-                        <Rectangle x:Name="SunRect7" Grid.Row="19" Grid.Column="9" Fill="Red" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
-                        <Rectangle x:Name="SunRect8" Grid.Row="19" Grid.Column="10" Fill="Red" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
-                        <Rectangle x:Name="SunRect9" Grid.Row="19" Grid.Column="11" Fill="Red" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
-                        <Rectangle x:Name="SunRect10" Grid.Row="19" Grid.Column="12" Fill="Red" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
-                        <Rectangle x:Name="SunRect11" Grid.Row="19" Grid.Column="13" Fill="Red" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
-                        <Rectangle x:Name="SunRect12" Grid.Row="19" Grid.Column="14" Fill="Red" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
-                        <Rectangle x:Name="SunRect13" Grid.Row="19" Grid.Column="15" Fill="Red" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
-                        <Rectangle x:Name="SunRect14" Grid.Row="19" Grid.Column="16" Fill="Red" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
-                        <Rectangle x:Name="SunRect15" Grid.Row="19" Grid.Column="17" Fill="Red" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
-                        <Rectangle x:Name="SunRect16" Grid.Row="19" Grid.Column="18" Fill="Red" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
-                        <Rectangle x:Name="SunRect17" Grid.Row="19" Grid.Column="19" Fill="Red" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
-                        <Rectangle x:Name="SunRect18" Grid.Row="19" Grid.Column="20" Fill="Red" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
-                        <Rectangle x:Name="SunRect19" Grid.Row="19" Grid.Column="21" Fill="Red" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
-                        <Rectangle x:Name="SunRect20" Grid.Row="19" Grid.Column="22" Fill="Red" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
-                        <Rectangle x:Name="SunRect21" Grid.Row="19" Grid.Column="23" Fill="Red" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
-                        <Rectangle x:Name="SunRect22" Grid.Row="19" Grid.Column="24" Fill="Red" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
-                        <Rectangle x:Name="SunRect23" Grid.Row="19" Grid.Column="25" Fill="Red" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
-
-
-
+                        <Rectangle x:Name="SunRect0" Grid.Row="19" Grid.Column="2" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="00:00 to 01:00" />
+                        <Rectangle x:Name="SunRect1" Grid.Row="19" Grid.Column="3" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="01:00 to 02:00" />
+                        <Rectangle x:Name="SunRect2" Grid.Row="19" Grid.Column="4" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="02:00 to 03:00" />
+                        <Rectangle x:Name="SunRect3" Grid.Row="19" Grid.Column="5" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="03:00 to 04:00" />
+                        <Rectangle x:Name="SunRect4" Grid.Row="19" Grid.Column="6" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="04:00 to 05:00" />
+                        <Rectangle x:Name="SunRect5" Grid.Row="19" Grid.Column="7" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="05:00 to 06:00" />
+                        <Rectangle x:Name="SunRect6" Grid.Row="19" Grid.Column="8" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="06:00 to 07:00" />
+                        <Rectangle x:Name="SunRect7" Grid.Row="19" Grid.Column="9" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="07:00 to 08:00" />
+                        <Rectangle x:Name="SunRect8" Grid.Row="19" Grid.Column="10" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="08:00 to 09:00" />
+                        <Rectangle x:Name="SunRect9" Grid.Row="19" Grid.Column="11" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="09:00 to 10:00" />
+                        <Rectangle x:Name="SunRect10" Grid.Row="19" Grid.Column="12" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="10:00 to 11:00" />
+                        <Rectangle x:Name="SunRect11" Grid.Row="19" Grid.Column="13" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="11:00 to 12:00" />
+                        <Rectangle x:Name="SunRect12" Grid.Row="19" Grid.Column="14" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="12:00 to 13:00" />
+                        <Rectangle x:Name="SunRect13" Grid.Row="19" Grid.Column="15" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="13:00 to 14:00" />
+                        <Rectangle x:Name="SunRect14" Grid.Row="19" Grid.Column="16" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="14:00 to 15:00" />
+                        <Rectangle x:Name="SunRect15" Grid.Row="19" Grid.Column="17" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="15:00 to 16:00" />
+                        <Rectangle x:Name="SunRect16" Grid.Row="19" Grid.Column="18" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="16:00 to 17:00" />
+                        <Rectangle x:Name="SunRect17" Grid.Row="19" Grid.Column="19" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="17:00 to 18:00" />
+                        <Rectangle x:Name="SunRect18" Grid.Row="19" Grid.Column="20" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="18:00 to 19:00" />
+                        <Rectangle x:Name="SunRect19" Grid.Row="19" Grid.Column="21" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="19:00 to 20:00" />
+                        <Rectangle x:Name="SunRect20" Grid.Row="19" Grid.Column="22" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="20:00 to 21:00" />
+                        <Rectangle x:Name="SunRect21" Grid.Row="19" Grid.Column="23" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
+                        <Rectangle x:Name="SunRect22" Grid.Row="19" Grid.Column="24" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
+                        <Rectangle x:Name="SunRect23" Grid.Row="19" Grid.Column="25" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
                     </Grid>
                 </Grid>
             </TabItem>

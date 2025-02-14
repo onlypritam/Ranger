@@ -30,7 +30,7 @@ namespace Ranger
         private static Resource? SelectedResource;
         private static string? FilePath;
 
-        private string DefaultTitle = "Ranger (v 0.1)";
+        private string DefaultTitle = "Ranger (v 1.0)";
         private string NewTitle = "<New>";
 
         public static bool HasChanges { get; set; }
@@ -391,10 +391,9 @@ namespace Ranger
         {
             try
             {
+                PlotCoverageUI(null);
                 Skill skill = (Skill)CboSkills.SelectedItem;
                 if (skill is null) return;
-
-                PlotCoverageUI(null);
 
                 DayOfWeekCoverage = new();
                 foreach (DaysOfWeek day in Enum.GetValues(typeof(DaysOfWeek)))
@@ -470,7 +469,7 @@ namespace Ranger
                     //next day found, now plot
                     for (int i = 0; i < aw.EndTime.Hour; i++)
                     {
-                        DayOfWeekCoverage[aw.DayOfWeek][i].Names.Add(res.Name);
+                        DayOfWeekCoverage[nextDay][i].Names.Add(res.Name);
                     }
                 }
             }
@@ -748,6 +747,11 @@ namespace Ranger
             colors[12] = (Color)ColorConverter.ConvertFromString("#1b2a6d");
             colors[13] = (Color)ColorConverter.ConvertFromString("#1a1662");
             colors[14] = (Color)ColorConverter.ConvertFromString("#180054");
+        }
+
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show($"Developer by Snehadeep Chowdhury. Please send your feedbacks and queries to Snehadeep.Chowdhury@microsoft.com and Snehadeep.Chowdhury@hotmail.com.", "Hi!", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
