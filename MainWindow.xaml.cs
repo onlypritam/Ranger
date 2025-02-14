@@ -10,12 +10,11 @@ using System.Windows.Shapes;
 namespace Ranger
 {
     public partial class MainWindow : Window
-
     {
         public static ObservableCollection<Skill> Skills = new ObservableCollection<Skill>();
-        public static ObservableCollection<Resource> Resources = new ObservableCollection<Resource>();
+        public static ObservableCollection<Resource> Engineers = new ObservableCollection<Resource>();
 
-        Dictionary<DaysOfWeek, int[]> DayOfWeekCoverage; //TODO: save the name of the engineer along with count.
+        Dictionary<DaysOfWeek, GraphInfo[]> DayOfWeekCoverage;
         Rectangle[] mondayRects;
         Rectangle[] tuesdayRects;
         Rectangle[] wednesdayRects;
@@ -40,7 +39,7 @@ namespace Ranger
         {
             InitializeComponent();
             DgSkills.ItemsSource = Skills;
-            DgResources.ItemsSource = Resources;
+            DgResources.ItemsSource = Engineers;
             this.Title = DefaultTitle + " " + NewTitle;
             this.DataContext = this;
 
@@ -64,7 +63,7 @@ namespace Ranger
                 {
                     InputFile? inputFile = new InputFile();
                     inputFile.Skills = Skills.ToList();
-                    inputFile.Resources = Resources.ToList();
+                    inputFile.Resources = Engineers.ToList();
 
                     Util.SerializeObject(inputFile, FilePath);
                     this.Title = DefaultTitle + " " + FilePath;
@@ -83,7 +82,7 @@ namespace Ranger
             {
                 InputFile? inputFile = new InputFile();
                 inputFile.Skills = Skills.ToList();
-                inputFile.Resources = Resources.ToList();
+                inputFile.Resources = Engineers.ToList();
 
                 Microsoft.Win32.SaveFileDialog saveFileDlg = new Microsoft.Win32.SaveFileDialog();
                 saveFileDlg.Title = "Save Ranger file";
@@ -127,11 +126,11 @@ namespace Ranger
                     }
                     else
                     {
-                        Resources.Clear();
+                        Engineers.Clear();
                         Skills.Clear();
                         foreach (var resource in inputFile.Resources)
                         {
-                            Resources.Add(resource);
+                            Engineers.Add(resource);
                         }
 
                         foreach (var skill in inputFile.Skills)
@@ -173,7 +172,7 @@ namespace Ranger
             this.Title = DefaultTitle + " " + NewTitle;
 
             Skills.Clear();
-            Resources.Clear();
+            Engineers.Clear();
         }
 
         #endregion
@@ -213,7 +212,7 @@ namespace Ranger
             try
             {
                 HasChanges = true;
-                Resources.Add(new Resource(Util.GetRandomString(14)));
+                Engineers.Add(new Resource(Util.GetRandomString(14)));
             }
             catch (Exception ex)
             {
@@ -231,7 +230,7 @@ namespace Ranger
                     throw new InvalidOperationException("No resource selected. Please select a resource.");
                 }
 
-                Resources.Add(Util.GetResourceCopy(SelectedResource));
+                Engineers.Add(Util.GetResourceCopy(SelectedResource));
             }
             catch (Exception ex)
             {
@@ -246,7 +245,7 @@ namespace Ranger
                 HasChanges = true;
                 Resource resource = (Resource)((System.Windows.Controls.Button)e.Source).DataContext;
 
-                Resources.Remove(resource);
+                Engineers.Remove(resource);
             }
             catch (Exception ex)
             {
@@ -281,7 +280,7 @@ namespace Ranger
         {
             try
             {
-                if (Skills.Count == 0 || Resources.Count == 0)
+                if (Skills.Count == 0 || Engineers.Count == 0)
                 {
                     throw new InvalidOperationException("Create atleast one skill and resource.");
                 }
@@ -388,51 +387,6 @@ namespace Ranger
             }
         }
 
-        private void PlotCoverage(AvailabilityWindow? aw)
-        {
-            try
-            {
-                if (aw is null || !aw.Active)
-                {
-                    return;
-                }
-
-                if (aw.StartTime.Hour < aw.EndTime.Hour)
-                {
-                    for (int i = aw.StartTime.Hour; i < aw.EndTime.Hour; i++)
-                    {
-                        DayOfWeekCoverage[aw.DayOfWeek][i] += 1;
-                    }
-                }
-                else if (aw.StartTime.Hour > aw.EndTime.Hour)
-                {
-                    for (int i = aw.StartTime.Hour; i < 24; i++)
-                    {
-                        DayOfWeekCoverage[aw.DayOfWeek][i] += 1;
-                    }
-
-                    LinkedList<string> daysList = new LinkedList<string>(Enum.GetNames(typeof(DaysOfWeek)));
-
-                    //find next day
-                    DaysOfWeek nextDay = DaysOfWeek.Mon;
-
-                    LinkedListNode<string> currentNode = daysList.Find(aw.DayOfWeek.ToString());
-                    LinkedListNode<string> nextNode = currentNode.Next ?? daysList.First;
-                    _ = Enum.TryParse<DaysOfWeek>(nextNode.Value, out nextDay);
-
-                    //next day found, now plot
-                    for (int i = 0; i < aw.EndTime.Hour; i++)
-                    {
-                        DayOfWeekCoverage[nextDay][i] += 1;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ShowError(ex.Message);
-            }
-        }
-
         private void BtnRefreshPlot_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -445,10 +399,14 @@ namespace Ranger
                 DayOfWeekCoverage = new();
                 foreach (DaysOfWeek day in Enum.GetValues(typeof(DaysOfWeek)))
                 {
-                    DayOfWeekCoverage.Add(day, new int[24]);
+                    DayOfWeekCoverage.Add(day, new GraphInfo[MaxHours]);
+                    for (int i = 0; i < MaxHours; i++)
+                    {
+                        DayOfWeekCoverage[day][i] = new GraphInfo();
+                    }
                 }
 
-                foreach (Resource res in Resources)
+                foreach (Resource res in Engineers)
                 {
                     if (res.Skills.Any(x => x.Name == skill.Name))
                     {
@@ -464,7 +422,7 @@ namespace Ranger
                                 throw new Exception("Duplicate shift found for resource " + res.Name, ex);
                             }
 
-                            PlotCoverage(aw);
+                            PlotCoverage(aw, res);
                         }
                     }
                 }
@@ -477,7 +435,52 @@ namespace Ranger
             }
         }
 
-        private void PlotCoverageUI(Dictionary<DaysOfWeek, int[]>? plot)
+        private void PlotCoverage(AvailabilityWindow? aw, Resource res)
+        {
+            try
+            {
+                if (aw is null || !aw.Active)
+                {
+                    return;
+                }
+
+                if (aw.StartTime.Hour < aw.EndTime.Hour)
+                {
+                    for (int i = aw.StartTime.Hour; i < aw.EndTime.Hour; i++)
+                    {
+                        DayOfWeekCoverage[aw.DayOfWeek][i].Names.Add(res.Name);
+                    }
+                }
+                else if (aw.StartTime.Hour > aw.EndTime.Hour)
+                {
+                    for (int i = aw.StartTime.Hour; i < MaxHours; i++)
+                    {
+                        DayOfWeekCoverage[aw.DayOfWeek][i].Names.Add(res.Name);
+                    }
+
+                    LinkedList<string> daysList = new LinkedList<string>(Enum.GetNames(typeof(DaysOfWeek)));
+
+                    //find next day
+                    DaysOfWeek nextDay = DaysOfWeek.Mon;
+
+                    LinkedListNode<string> currentNode = daysList.Find(aw.DayOfWeek.ToString());
+                    LinkedListNode<string> nextNode = currentNode.Next ?? daysList.First;
+                    _ = Enum.TryParse<DaysOfWeek>(nextNode.Value, out nextDay);
+
+                    //next day found, now plot
+                    for (int i = 0; i < aw.EndTime.Hour; i++)
+                    {
+                        DayOfWeekCoverage[aw.DayOfWeek][i].Names.Add(res.Name);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex.Message);
+            }
+        }
+
+        private void PlotCoverageUI(Dictionary<DaysOfWeek, GraphInfo[]>? plot)
         {
             try
             {
@@ -485,54 +488,41 @@ namespace Ranger
                 {
                     for (int i = 0; i < MaxHours; i++)
                     {
-                        mondayRects[i].Fill = Brushes.Gray;
-                        mondayRects[i].ToolTip = "";
-
-                        tuesdayRects[i].Fill = Brushes.Gray;
-                        tuesdayRects[i].ToolTip = "";
-
-                        wednesdayRects[i].Fill = Brushes.Gray;
-                        wednesdayRects[i].ToolTip = "";
-
-                        thursdayRects[i].Fill = Brushes.Gray;
-                        thursdayRects[i].ToolTip = "";
-
-                        fridayRects[i].Fill = Brushes.Gray;
-                        fridayRects[i].ToolTip = "";
-
-                        saturdayRects[i].Fill = Brushes.Gray;
-                        saturdayRects[i].ToolTip = "";
-
-                        sundayRects[i].Fill = Brushes.Gray;
-                        sundayRects[i].ToolTip = "";
+                        SetRectangle(mondayRects[i], new List<string>());
+                        SetRectangle(tuesdayRects[i], new List<string>());
+                        SetRectangle(wednesdayRects[i], new List<string>());
+                        SetRectangle(thursdayRects[i], new List<string>());
+                        SetRectangle(fridayRects[i], new List<string>());
+                        SetRectangle(saturdayRects[i], new List<string>());
+                        SetRectangle(sundayRects[i], new List<string>());
                     }
                 }
                 else
                 {
                     for (int i = 0; i < MaxHours; i++)
                     {
-                        mondayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Mon][i], Resources.Count));
-                        mondayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Mon][i] };
-
-                        tuesdayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Tue][i], Resources.Count));
-                        tuesdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Tue][i] };
-
-                        wednesdayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Wed][i], Resources.Count));
-                        wednesdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Wed][i] };
-
-                        thursdayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Thu][i], Resources.Count));
-                        thursdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Thu][i] };
-
-                        fridayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Fri][i], Resources.Count));
-                        fridayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Fri][i] };
-
-                        saturdayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Sat][i], Resources.Count));
-                        saturdayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Sat][i] };
-
-                        sundayRects[i].Fill = new SolidColorBrush(GetHMColor(DayOfWeekCoverage[DaysOfWeek.Sun][i], Resources.Count));
-                        sundayRects[i].ToolTip = new ToolTip() { Content = DayOfWeekCoverage[DaysOfWeek.Sun][i] };
+                        SetRectangle(mondayRects[i], DayOfWeekCoverage[DaysOfWeek.Mon][i].Names);
+                        SetRectangle(tuesdayRects[i], DayOfWeekCoverage[DaysOfWeek.Tue][i].Names);
+                        SetRectangle(wednesdayRects[i], DayOfWeekCoverage[DaysOfWeek.Wed][i].Names);
+                        SetRectangle(thursdayRects[i], DayOfWeekCoverage[DaysOfWeek.Thu][i].Names);
+                        SetRectangle(fridayRects[i], DayOfWeekCoverage[DaysOfWeek.Fri][i].Names);
+                        SetRectangle(saturdayRects[i], DayOfWeekCoverage[DaysOfWeek.Sat][i].Names);
+                        SetRectangle(sundayRects[i], DayOfWeekCoverage[DaysOfWeek.Sun][i].Names);
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex.Message);
+            }
+        }
+
+        private void SetRectangle(Rectangle rect, List<string> names)
+        {
+            try
+            {
+                rect.Fill = new SolidColorBrush(GetHMColor(names.Count, Engineers.Count));
+                rect.ToolTip = new ToolTip() { Content = "(" + names.Count + ") " + String.Join(",", names) };
             }
             catch (Exception ex)
             {

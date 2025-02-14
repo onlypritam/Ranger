@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -133,6 +134,16 @@ namespace Ranger
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
             MainWindow.HasChanges = true;
+        }
+    }
+
+    public struct GraphInfo
+    {
+        public List<string> Names { get; set; }
+
+        public GraphInfo()
+        {
+            Names = new List<string>();
         }
     }
 
