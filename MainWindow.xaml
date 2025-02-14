@@ -16,7 +16,7 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="Ranger" Height="840" Width="1080" WindowState="Maximized" Closing="Window_Closing">
+        Title="Ranger" Height="840" Width="1080" WindowState="Maximized" Closing="Window_Closing" Icon="/icon.png">
 
     <Window.Resources>
         <Style x:Key = "TriggerStyle" TargetType = "Button">
