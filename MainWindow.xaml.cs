@@ -13,6 +13,7 @@ namespace Ranger
     {
         public static ObservableCollection<Skill> Skills = new ObservableCollection<Skill>();
         public static ObservableCollection<Resource> Engineers = new ObservableCollection<Resource>();
+        public static ObservableCollection<ResourceWithSchedule> SkillEngineers = new ObservableCollection<ResourceWithSchedule>();
 
         Dictionary<DaysOfWeek, GraphInfo[]> DayOfWeekCoverage;
         Rectangle[] mondayRects;
@@ -40,6 +41,7 @@ namespace Ranger
             InitializeComponent();
             DgSkills.ItemsSource = Skills;
             DgResources.ItemsSource = Engineers;
+            DgSkillResources.ItemsSource = SkillEngineers;
             this.Title = DefaultTitle + " " + NewTitle;
             this.DataContext = this;
 
@@ -128,6 +130,7 @@ namespace Ranger
                     {
                         Engineers.Clear();
                         Skills.Clear();
+                        SkillEngineers.Clear();
 
                         foreach (var skill in inputFile.Skills)
                         {
@@ -412,6 +415,7 @@ namespace Ranger
                 Skill skill = (Skill)CboSkills.SelectedItem;
                 if (skill is null) return;
 
+                SkillEngineers.Clear();
                 DayOfWeekCoverage = new();
                 foreach (DaysOfWeek day in Enum.GetValues(typeof(DaysOfWeek)))
                 {
@@ -426,6 +430,9 @@ namespace Ranger
                 {
                     if (res.Skills.Any(x => x.Name == skill.Name))
                     {
+                        ResourceWithSchedule rs = new ResourceWithSchedule();
+                        rs.ResourceName = res.Name;
+
                         foreach (DaysOfWeek day in Enum.GetValues(typeof(DaysOfWeek)))
                         {
                             AvailabilityWindow? aw = null;
@@ -437,9 +444,21 @@ namespace Ranger
                             {
                                 throw new Exception("Duplicate shift found for resource " + res.Name, ex);
                             }
-
+                            
                             PlotCoverage(aw, res);
+
+                            if (aw is not null)
+                            {
+                                if (aw.DayOfWeek == DaysOfWeek.Mon) rs.Monday = aw.StartTime + " - " + aw.EndTime;
+                                else if (aw.DayOfWeek == DaysOfWeek.Tue) rs.Tuesday = aw.StartTime + " - " + aw.EndTime;
+                                else if (aw.DayOfWeek == DaysOfWeek.Wed) rs.Wednesday = aw.StartTime + " - " + aw.EndTime;
+                                else if (aw.DayOfWeek == DaysOfWeek.Thu) rs.Thursday = aw.StartTime + " - " + aw.EndTime;
+                                else if (aw.DayOfWeek == DaysOfWeek.Fri) rs.Friday = aw.StartTime + " - " + aw.EndTime;
+                                else if (aw.DayOfWeek == DaysOfWeek.Sat) rs.Saturday = aw.StartTime + " - " + aw.EndTime;
+                                else if (aw.DayOfWeek == DaysOfWeek.Sun) rs.Sunday = aw.StartTime + " - " + aw.EndTime;
+                            }
                         }
+                        SkillEngineers.Add(rs);
                     }
                 }
 
@@ -769,6 +788,18 @@ namespace Ranger
         private void About_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show($"Developer by Snehadeep Chowdhury. Please send your feedbacks and queries to Snehadeep.Chowdhury@microsoft.com and Snehadeep.Chowdhury@hotmail.com.", "Hi!", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void CboSkills_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                BtnRefreshPlot_Click(sender,e);
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex.Message);
+            }
         }
     }
 }

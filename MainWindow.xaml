@@ -39,7 +39,7 @@
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontWeight" Value="Normal" />
         </Style>
-
+        
         <ObjectDataProvider x:Key="DaysOfWeekEnum" MethodName="GetValues" ObjectType="{x:Type assembly:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type Type="local:DaysOfWeek"/>
@@ -108,8 +108,8 @@
                     <Button x:Name="BtnCopyResource" Grid.Row="1" Grid.Column="3"  Content="{materialDesign:PackIcon ContentCopy}" HorizontalAlignment="Right" VerticalAlignment="Center" Click="BtnCopyResource_Click" Margin="0,0,55,0" ToolTip="Copy resource." />
 
 
-                    <TextBlock Text="Skill" Style="{StaticResource HeaderTextBlockStyle}" Foreground="{DynamicResource PrimaryHueDarkBrush}" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <TextBlock Text="Resource" Style="{StaticResource HeaderTextBlockStyle}" Foreground="{DynamicResource PrimaryHueDarkBrush}" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBlock Text="Skills" Style="{StaticResource HeaderTextBlockStyle}" Foreground="{DynamicResource PrimaryHueDarkBrush}" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBlock Text="Resources" Style="{StaticResource HeaderTextBlockStyle}" Foreground="{DynamicResource PrimaryHueDarkBrush}" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
 
                     <DataGrid x:Name="DgSkills" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="1"  AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single">
@@ -303,13 +303,15 @@
 
                             <RowDefinition Height = "20" />
                             <RowDefinition Height = "10" />
+                            <RowDefinition Height = "60" />
+                            <RowDefinition Height = "10" />
 
                             <RowDefinition Height = "*" />
                             <RowDefinition Height = "10" />
                         </Grid.RowDefinitions>
 
                         <ComboBox x:Name="CboSkills" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5" materialDesign:HintAssist.Hint="Select skill" Style="{StaticResource MaterialDesignFloatingHintComboBox}"  
-                                  ItemsSource="{x:Static local:MainWindow.Skills}" DisplayMemberPath="Name"/>
+                                  ItemsSource="{x:Static local:MainWindow.Skills}" DisplayMemberPath="Name" SelectionChanged="CboSkills_SelectionChanged"/>
                         <Button x:Name="BtnRefreshPlot" Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="6"  Content="{materialDesign:PackIcon Refresh}" HorizontalAlignment="Left" VerticalAlignment="Center" Click="BtnRefreshPlot_Click" />
 
 
@@ -522,6 +524,30 @@
                         <Rectangle x:Name="SunRect21" Grid.Row="19" Grid.Column="23" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="21:00 to 22:00" />
                         <Rectangle x:Name="SunRect22" Grid.Row="19" Grid.Column="24" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="22:00 to 23:00" />
                         <Rectangle x:Name="SunRect23" Grid.Row="19" Grid.Column="25" Fill="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,1,0" ToolTip="23:00 to 24:00" />
+
+                        <TextBlock Text="Resources" Style="{StaticResource HeaderTextBlockStyle}" Foreground="{DynamicResource PrimaryHueDarkBrush}" Grid.Row="21" Grid.Column="1" Grid.ColumnSpan="5" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+                        <DataGrid x:Name="DgSkillResources" Grid.Row="23" Grid.Column="1" Grid.ColumnSpan="25" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single"  SelectionChanged="DgResources_SelectionChanged">
+                            <DataGrid.Resources>
+                                <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}" >
+                                    <Setter Property="Background" Value="#009788" />
+                                    <Setter Property="Foreground" Value="White" />
+                                    <Setter Property="Height" Value="45" />
+                                    <Setter Property="Width" Value="auto"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                </Style>
+                            </DataGrid.Resources>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name"  FontWeight="Medium" Foreground="#009788" FontSize="16" Width="220"  Binding="{Binding ResourceName, Mode=OneWay}"/>
+                                <DataGridTextColumn Header="Monday" Width="*" Foreground="#009788" FontSize="15" Binding="{Binding Monday, Mode=OneWay}"/>
+                                <DataGridTextColumn Header="Tuesday" Width="*" Foreground="#009788" FontSize="15" Binding="{Binding Tuesday, Mode=OneWay}"/>
+                                <DataGridTextColumn Header="Wednesday" Width="*" Foreground="#009788" FontSize="15" Binding="{Binding Wednesday, Mode=OneWay}"/>
+                                <DataGridTextColumn Header="Thursday" Width="*" Foreground="#009788" FontSize="15" Binding="{Binding Thursday, Mode=OneWay}"/>
+                                <DataGridTextColumn Header="Friday" Width="*" Foreground="#009788" FontSize="15" Binding="{Binding Friday, Mode=OneWay}"/>
+                                <DataGridTextColumn Header="Saturday" Width="*" Foreground="#009788" FontSize="15" Binding="{Binding Saturday, Mode=OneWay}"/>
+                                <DataGridTextColumn Header="Sunday" Width="*" Foreground="#009788" FontSize="15" Binding="{Binding Sunday, Mode=OneWay}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
                     </Grid>
                 </Grid>
             </TabItem>
