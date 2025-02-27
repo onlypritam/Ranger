@@ -184,6 +184,7 @@ namespace Ranger
 
             Skills.Clear();
             Engineers.Clear();
+            SkillEngineers.Clear();
         }
 
         #endregion
