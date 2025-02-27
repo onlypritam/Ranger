@@ -31,7 +31,7 @@ namespace Ranger
         private static Resource? SelectedResource;
         private static string? FilePath;
 
-        private string DefaultTitle = "Ranger (v 1.0)";
+        private string DefaultTitle = "Ranger (v 1.1)";
         private string NewTitle = "<New>";
 
         public static bool HasChanges { get; set; }
