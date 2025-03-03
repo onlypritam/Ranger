@@ -117,7 +117,6 @@ namespace Ranger
     {
         private string name;
 
-        //TODO - do we really need to set id to null??
         public Skill(string name, string id = null)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -136,7 +135,7 @@ namespace Ranger
             }
         }
 
-        public string Id { get; } = Guid.NewGuid().ToString();
+        public string Id { get; private set; }
 
         public string Name
         {
@@ -157,7 +156,7 @@ namespace Ranger
         }
     }
 
-    public struct ResourceWithSchedule
+    public record ResourceWithSchedule
     {
         public string ResourceName { get; set; }
         public string Monday { get; set; }
@@ -169,7 +168,7 @@ namespace Ranger
         public string Sunday { get; set; }
     }
 
-    public struct GraphInfo
+    public record GraphInfo
     {
         public List<string> Names { get; set; }
 
