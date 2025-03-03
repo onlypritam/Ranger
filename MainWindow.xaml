@@ -112,7 +112,7 @@
                     <TextBlock Text="Resources" Style="{StaticResource HeaderTextBlockStyle}" Foreground="{DynamicResource PrimaryHueDarkBrush}" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
 
-                    <DataGrid x:Name="DgSkills" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="1"  AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single">
+                    <DataGrid x:Name="DgSkills" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="1"  AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" CellEditEnding="DgSkills_CellEditEnding">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name, Mode=TwoWay}" EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
 

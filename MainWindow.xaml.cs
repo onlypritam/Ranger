@@ -31,7 +31,7 @@ namespace Ranger
         private static Resource? SelectedResource;
         private static string? FilePath;
 
-        private string DefaultTitle = "Ranger (v 1.1)";
+        private string DefaultTitle = "Ranger (v 1.2)";
         private string NewTitle = "<New>";
 
         public static bool HasChanges { get; set; }
@@ -190,6 +190,39 @@ namespace Ranger
         #endregion
 
         #region SkillGrid
+
+        private void DgSkills_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            try
+            {
+                string NewVal;
+                Skill skill = (Skill)e.Row.DataContext;
+                if (e.EditingElement is System.Windows.Controls.TextBox)
+                {
+                    NewVal = ((System.Windows.Controls.TextBox)e.EditingElement).Text;
+                    if (string.IsNullOrWhiteSpace(NewVal)) throw new ArgumentException("Value cannot be null or blank.");
+                    if(NewVal != skill.Name)
+                    {
+                        HasChanges = true;
+                        foreach(Resource res in Engineers)
+                        {
+                            foreach(Skill skl in res.Skills)
+                            {
+                                if (skl.Id == skill.Id)
+                                {
+                                    skl.Name = NewVal;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex.Message);
+            }
+        }
+
         private void BtnAddSkill_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -429,7 +462,7 @@ namespace Ranger
 
                 foreach (Resource res in Engineers)
                 {
-                    if (res.Skills.Any(x => x.Name == skill.Name))
+                    if (res.Skills.Any(x => x.Id == skill.Id))
                     {
                         ResourceWithSchedule rs = new ResourceWithSchedule();
                         rs.ResourceName = res.Name;

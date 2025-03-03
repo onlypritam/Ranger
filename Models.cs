@@ -117,6 +117,7 @@ namespace Ranger
     {
         private string name;
 
+        //TODO - do we really need to set id to null??
         public Skill(string name, string id = null)
         {
             if (string.IsNullOrWhiteSpace(name))
