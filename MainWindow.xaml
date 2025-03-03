@@ -46,6 +46,12 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
 
+        <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}" >
+            <Setter Property="Foreground" Value="#009788" />
+            <Setter Property="Height" Value="45" />
+            <Setter Property="Width" Value="auto"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
     </Window.Resources>
 
     <Grid>
