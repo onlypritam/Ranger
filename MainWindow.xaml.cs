@@ -25,14 +25,19 @@ namespace Ranger
         Rectangle[] sundayRects;
 
         Color[] colors;
+        LinkedList<string> DayofWeekList = new LinkedList<string>(Enum.GetNames(typeof(DaysOfWeek)));
 
         const int MaxHours = 24;
+        const int MinForHrCoverage = 30;
+        const int Minin24Hr = 1439;
 
         private static Resource? SelectedResource;
         private static string? FilePath;
 
-        private string DefaultTitle = "Ranger (v 1.3)";
+        private string DefaultTitle = "Ranger (v 1.4)";
         private string NewTitle = "<New>";
+        private int OffSet = 0;
+       
 
         public static bool HasChanges { get; set; }
 
@@ -445,55 +450,41 @@ namespace Ranger
         {
             try
             {
+                if (!int.TryParse(TxtOffSet.Text.Trim(), out OffSet) || OffSet > Minin24Hr || OffSet < -Minin24Hr) 
+                    throw new ArgumentException("Invalid offset. The offset range should be between " + Minin24Hr + " to -" + Minin24Hr);
+
                 PlotCoverageUI(null);
+                SkillEngineers.Clear();
+                InitiateDayOfWeekCoverage();
+
                 Skill skill = (Skill)CboSkills.SelectedItem;
                 if (skill is null) return;
 
-                SkillEngineers.Clear();
-                DayOfWeekCoverage = new();
-                foreach (DaysOfWeek day in Enum.GetValues(typeof(DaysOfWeek)))
+                foreach (Resource res in Engineers.Where(x => x.Active && x.Skills.Any(x => x.Id == skill.Id)))
                 {
-                    DayOfWeekCoverage.Add(day, new GraphInfo[MaxHours]);
-                    for (int i = 0; i < MaxHours; i++)
-                    {
-                        DayOfWeekCoverage[day][i] = new GraphInfo();
-                    }
-                }
+                    ResourceWithSchedule rs = new ResourceWithSchedule() { ResourceName = res.Name };
 
-                foreach (Resource res in Engineers)
-                {
-                    if (res.Skills.Any(x => x.Id == skill.Id))
+                    foreach (DaysOfWeek day in Enum.GetValues(typeof(DaysOfWeek)))
                     {
-                        ResourceWithSchedule rs = new ResourceWithSchedule();
-                        rs.ResourceName = res.Name;
-
-                        foreach (DaysOfWeek day in Enum.GetValues(typeof(DaysOfWeek)))
+                        AvailabilityWindow? awWithOffset = null;
+                        try
                         {
-                            AvailabilityWindow? aw = null;
-                            try
-                            {
-                                aw = res.AvailabilityWindows.SingleOrDefault(x => x.DayOfWeek == day);
-                            }
-                            catch (System.InvalidOperationException ex)
-                            {
-                                throw new Exception("Duplicate shift found for resource " + res.Name, ex);
-                            }
-                            
-                            PlotCoverage(aw, res);
-
+                            AvailabilityWindow? aw = res.AvailabilityWindows.SingleOrDefault(x => x.DayOfWeek == day);
                             if (aw is not null)
                             {
-                                if (aw.DayOfWeek == DaysOfWeek.Mon) rs.Monday = aw.StartTime + " - " + aw.EndTime;
-                                else if (aw.DayOfWeek == DaysOfWeek.Tue) rs.Tuesday = aw.StartTime + " - " + aw.EndTime;
-                                else if (aw.DayOfWeek == DaysOfWeek.Wed) rs.Wednesday = aw.StartTime + " - " + aw.EndTime;
-                                else if (aw.DayOfWeek == DaysOfWeek.Thu) rs.Thursday = aw.StartTime + " - " + aw.EndTime;
-                                else if (aw.DayOfWeek == DaysOfWeek.Fri) rs.Friday = aw.StartTime + " - " + aw.EndTime;
-                                else if (aw.DayOfWeek == DaysOfWeek.Sat) rs.Saturday = aw.StartTime + " - " + aw.EndTime;
-                                else if (aw.DayOfWeek == DaysOfWeek.Sun) rs.Sunday = aw.StartTime + " - " + aw.EndTime;
+                                awWithOffset = OffSet >= 0 ? GetAwCopyAfterMinutes(aw, (uint)OffSet) : GetAwCopyBeforeMinutes(aw, (uint)Math.Abs(OffSet));
                             }
                         }
-                        SkillEngineers.Add(rs);
+                        catch (System.InvalidOperationException ex)
+                        {
+                            throw new Exception("Duplicate shift found for resource " + res.Name, ex);
+                        }
+                            
+                        PlotCoverage(awWithOffset, res);
+                        PlotScheduleGrid(awWithOffset, rs);
                     }
+
+                    SkillEngineers.Add(rs);
                 }
 
                 PlotCoverageUI(DayOfWeekCoverage);
@@ -504,42 +495,58 @@ namespace Ranger
             }
         }
 
-        private void PlotCoverage(AvailabilityWindow? aw, Resource res)
+        private void PlotScheduleGrid(AvailabilityWindow? aw, ResourceWithSchedule rs)
+        {
+            if (aw is null || !aw.Active || rs is null || string.IsNullOrWhiteSpace(rs.ResourceName))
+            {
+                return;
+            }
+
+            string txt = aw.StartTime + " - " + aw.EndTime;
+
+            if (aw.DayOfWeek == DaysOfWeek.Mon) rs.Monday = string.IsNullOrWhiteSpace(rs.Monday) ? txt : "+ " + txt;
+            else if (aw.DayOfWeek == DaysOfWeek.Tue) rs.Tuesday = string.IsNullOrWhiteSpace(rs.Tuesday) ? txt : "+ " + txt;
+            else if (aw.DayOfWeek == DaysOfWeek.Wed) rs.Wednesday = string.IsNullOrWhiteSpace(rs.Wednesday) ? txt : "+ " + txt;
+            else if (aw.DayOfWeek == DaysOfWeek.Thu) rs.Thursday = string.IsNullOrWhiteSpace(rs.Thursday) ? txt : "+ " + txt;
+            else if (aw.DayOfWeek == DaysOfWeek.Fri) rs.Friday = string.IsNullOrWhiteSpace(rs.Friday) ? txt : "+ " + txt;
+            else if (aw.DayOfWeek == DaysOfWeek.Sat) rs.Saturday = string.IsNullOrWhiteSpace(rs.Saturday) ? txt : "+ " + txt;
+            else if (aw.DayOfWeek == DaysOfWeek.Sun) rs.Sunday = string.IsNullOrWhiteSpace(rs.Sunday) ? txt : "+ " + txt;
+        }
+
+        private void PlotCoverage(AvailabilityWindow? aw, Resource resource)
         {
             try
             {
-                if (aw is null || !aw.Active)
+                if (aw is null || !aw.Active || resource is null)
                 {
                     return;
                 }
 
+                int startHr = aw.StartTime.Minute <= (60 - MinForHrCoverage)
+                    ? aw.StartTime.Hour : aw.StartTime.Hour + 1;
+                int endHr = aw.EndTime.Minute <= MinForHrCoverage ? aw.EndTime.Hour : aw.EndTime.Hour + 1;
+
                 if (aw.StartTime.Hour < aw.EndTime.Hour)
                 {
-                    for (int i = aw.StartTime.Hour; i < aw.EndTime.Hour; i++)
+                    for (int i = startHr; i < endHr; i++)
                     {
-                        DayOfWeekCoverage[aw.DayOfWeek][i].Names.Add(res.Name);
+                        DayOfWeekCoverage[aw.DayOfWeek][i].Names.Add(resource.Name);
                     }
                 }
                 else if (aw.StartTime.Hour > aw.EndTime.Hour)
                 {
-                    for (int i = aw.StartTime.Hour; i < MaxHours; i++)
+                    for (int i = startHr; i < MaxHours; i++)
                     {
-                        DayOfWeekCoverage[aw.DayOfWeek][i].Names.Add(res.Name);
+                        DayOfWeekCoverage[aw.DayOfWeek][i].Names.Add(resource.Name);
                     }
 
                     LinkedList<string> daysList = new LinkedList<string>(Enum.GetNames(typeof(DaysOfWeek)));
 
-                    //find next day
-                    DaysOfWeek nextDay = DaysOfWeek.Mon;
-
-                    LinkedListNode<string> currentNode = daysList.Find(aw.DayOfWeek.ToString());
-                    LinkedListNode<string> nextNode = currentNode.Next ?? daysList.First;
-                    _ = Enum.TryParse<DaysOfWeek>(nextNode.Value, out nextDay);
-
+                    DaysOfWeek nextDay = GetNextDayOfWeek(aw.DayOfWeek); 
                     //next day found, now plot
-                    for (int i = 0; i < aw.EndTime.Hour; i++)
+                    for (int i = 0; i < endHr; i++)
                     {
-                        DayOfWeekCoverage[nextDay][i].Names.Add(res.Name);
+                        DayOfWeekCoverage[nextDay][i].Names.Add(resource.Name);
                     }
                 }
             }
@@ -599,12 +606,62 @@ namespace Ranger
             }
         }
 
+        private DaysOfWeek GetNextDayOfWeek(DaysOfWeek dayOfWeek)
+        {
+            DaysOfWeek nextDay = DaysOfWeek.Mon;
+
+            LinkedListNode<string> currentNode = DayofWeekList.Find(dayOfWeek.ToString());
+            LinkedListNode<string> nextNode = currentNode.Next ?? DayofWeekList.First;
+            _ = Enum.TryParse<DaysOfWeek>(nextNode.Value, out nextDay);
+            return nextDay;
+        }
+
+        private DaysOfWeek GetPreviousDayOfWeek(DaysOfWeek dayOfWeek)
+        {
+            DaysOfWeek prevDay = DaysOfWeek.Mon;
+
+            LinkedListNode<string> currentNode = DayofWeekList.Find(dayOfWeek.ToString());
+            LinkedListNode<string> nextNode = currentNode.Previous ?? DayofWeekList.Last;
+            _ = Enum.TryParse<DaysOfWeek>(nextNode.Value, out prevDay);
+            return prevDay;
+        }
+
+        private AvailabilityWindow GetAwCopyAfterMinutes(AvailabilityWindow aw, uint minutes)
+        {
+            AvailabilityWindow? awWithOffset = new(aw.DayOfWeek, aw.StartTime, aw.EndTime);
+            awWithOffset.Active = aw.Active;
+            awWithOffset.StartTime = aw.StartTime.AddMinutes(minutes);
+            awWithOffset.EndTime = aw.EndTime.AddMinutes(minutes);
+
+            if (awWithOffset.StartTime < aw.StartTime)
+            {
+                awWithOffset.DayOfWeek = GetNextDayOfWeek(awWithOffset.DayOfWeek);
+            }
+
+            return awWithOffset;
+        }
+
+        private AvailabilityWindow GetAwCopyBeforeMinutes(AvailabilityWindow aw, uint minutes)
+        {
+            AvailabilityWindow? awWithOffset = new(aw.DayOfWeek, aw.StartTime, aw.EndTime);
+            awWithOffset.Active = aw.Active;
+            awWithOffset.StartTime = aw.StartTime.AddMinutes(minutes * -1);
+            awWithOffset.EndTime = aw.EndTime.AddMinutes(minutes * -1);
+
+            if (awWithOffset.StartTime > aw.StartTime)
+            {
+                awWithOffset.DayOfWeek = GetPreviousDayOfWeek(awWithOffset.DayOfWeek);
+            }
+
+            return awWithOffset;
+        }
+
         private Color GetHMColor(int value, int maxValue)
         {
             try
             {
                 if (value <= 0) return colors[0]; //preventing divide by 0 error
-                float res = (colors.Length / (float)maxValue) * value;
+                float res = ((colors.Length-1) / (float)maxValue) * value;
                 return (colors[(int)Math.Round(res)]);
             }
             catch (Exception ex)
@@ -817,6 +874,19 @@ namespace Ranger
             colors[12] = (Color)ColorConverter.ConvertFromString("#1b2a6d");
             colors[13] = (Color)ColorConverter.ConvertFromString("#1a1662");
             colors[14] = (Color)ColorConverter.ConvertFromString("#180054");
+        }
+
+        private void InitiateDayOfWeekCoverage()
+        {
+            DayOfWeekCoverage = new();
+            foreach (DaysOfWeek day in Enum.GetValues(typeof(DaysOfWeek)))
+            {
+                DayOfWeekCoverage.Add(day, new GraphInfo[MaxHours]);
+                for (int i = 0; i < MaxHours; i++)
+                {
+                    DayOfWeekCoverage[day][i] = new GraphInfo();
+                }
+            }
         }
 
         private void About_Click(object sender, RoutedEventArgs e)

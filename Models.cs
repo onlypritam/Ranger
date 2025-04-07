@@ -17,6 +17,7 @@ namespace Ranger
                 throw new ArgumentNullException("Invalid resource name.");
             }
             Name = name;
+            Active = true;
 
             if (id is null)
             {
@@ -42,6 +43,8 @@ namespace Ranger
                 OnPropertyChanged();
             }
         }
+
+        public bool Active { get; set; }
 
         public ObservableCollection<Skill> Skills { get; set; }
 
