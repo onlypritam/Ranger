@@ -318,7 +318,7 @@
                         </Grid.RowDefinitions>
 
                         <ComboBox x:Name="CboSkills" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5" materialDesign:HintAssist.Hint="Select skill" Style="{StaticResource MaterialDesignFloatingHintComboBox}"  
-                                  ItemsSource="{x:Static local:MainWindow.Skills}" DisplayMemberPath="Name" SelectionChanged="CboSkills_SelectionChanged"/>
+                                  ItemsSource="{x:Static local:MainWindow.Skills}" DisplayMemberPath="Name" SelectionChanged="CboSkills_SelectionChanged" DropDownOpened="CboSkills_DropDownOpened"/>
 
                         <TextBox x:Name="TxtOffSet" Grid.Row="3" Grid.Column="6" Grid.ColumnSpan="2" MaxLength="5" Margin="15,0,0,0" Text="0" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Offset minutes" HorizontalAlignment="Left" VerticalAlignment="Center"  />
                         <Button x:Name="BtnRefreshPlot" Grid.Row="3" Grid.Column="8" Grid.ColumnSpan="2" Margin="10,0,0,0"  Content="{materialDesign:PackIcon Refresh}" HorizontalAlignment="Left" VerticalAlignment="Center" Click="BtnRefreshPlot_Click"/>

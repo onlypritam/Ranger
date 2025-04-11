@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +15,7 @@ namespace Ranger
         public static ObservableCollection<Skill> Skills = new ObservableCollection<Skill>();
         public static ObservableCollection<Resource> Engineers = new ObservableCollection<Resource>();
         public static ObservableCollection<ResourceWithSchedule> SkillEngineers = new ObservableCollection<ResourceWithSchedule>();
+        public static string LastSavedJson = string.Empty;
 
         Dictionary<DaysOfWeek, GraphInfo[]> DayOfWeekCoverage;
         Rectangle[] mondayRects;
@@ -24,8 +26,9 @@ namespace Ranger
         Rectangle[] saturdayRects;
         Rectangle[] sundayRects;
 
-        Color[] colors;
+        Color[] GreenColors;
         LinkedList<string> DayofWeekList = new LinkedList<string>(Enum.GetNames(typeof(DaysOfWeek)));
+        SortedDictionary<int, Color> Bands;
 
         const int MaxHours = 24;
         const int MinForHrCoverage = 30;
@@ -34,13 +37,10 @@ namespace Ranger
         private static Resource? SelectedResource;
         private static string? FilePath;
 
-        private string DefaultTitle = "Ranger (v 1.4)";
+        private string DefaultTitle = "Ranger (v 1.5)";
         private string NewTitle = "<New>";
         private int OffSet = 0;
        
-
-        public static bool HasChanges { get; set; }
-
         public MainWindow()
         {
             InitializeComponent();
@@ -49,33 +49,20 @@ namespace Ranger
             DgSkillResources.ItemsSource = SkillEngineers;
             this.Title = DefaultTitle + " " + NewTitle;
             this.DataContext = this;
+            LastSavedJson = Util.GetEmptyJson();
 
-            HasChanges = false;
             CreateRectArray();
-            CreateColorPalatte();
+            CreateGreenColorPalatte();
             PlotCoverageUI(null);
             SetDefaultWindow();
-        }
+       }
 
         #region ToolBar
         private void BtnSaveFile_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(FilePath))
-                {
-                    BtnSaveFileAs_Click(sender, e);
-                }
-                else
-                {
-                    InputFile? inputFile = new InputFile();
-                    inputFile.Skills = Skills.ToList();
-                    inputFile.Resources = Engineers.ToList();
-
-                    Util.SerializeObject(inputFile, FilePath);
-                    this.Title = DefaultTitle + " " + FilePath;
-                    HasChanges = false;
-                }
+                Save();
             }
             catch (Exception ex)
             {
@@ -87,21 +74,8 @@ namespace Ranger
         {
             try
             {
-                InputFile? inputFile = new InputFile();
-                inputFile.Skills = Skills.ToList();
-                inputFile.Resources = Engineers.ToList();
-
-                Microsoft.Win32.SaveFileDialog saveFileDlg = new Microsoft.Win32.SaveFileDialog();
-                saveFileDlg.Title = "Save Ranger file";
-                saveFileDlg.Filter = "Ranger file|*.rng";
-                saveFileDlg.ShowDialog();
-                if (saveFileDlg.FileName != "")
-                {
-                    Util.SerializeObject(inputFile, saveFileDlg.FileName);
-                    this.Title = DefaultTitle + " " + saveFileDlg.FileName;
-                    FilePath = saveFileDlg.FileName;
-                }
-                HasChanges = false;
+                FilePath = string.Empty;
+                Save();
             }
             catch (Exception ex)
             {
@@ -109,14 +83,37 @@ namespace Ranger
             }
         }
 
+        private void Save()
+        {
+            InputFile? inputFile = new InputFile();
+            inputFile.Skills = Skills.ToList();
+            inputFile.Resources = Engineers.ToList();
+
+            if (string.IsNullOrWhiteSpace(FilePath))
+            {
+                Microsoft.Win32.SaveFileDialog saveFileDlg = new Microsoft.Win32.SaveFileDialog();
+                saveFileDlg.Title = "Save Ranger file";
+                saveFileDlg.Filter = "Ranger file|*.rng";
+                saveFileDlg.ShowDialog();
+                if (saveFileDlg.FileName != "")
+                {
+                    FilePath = saveFileDlg.FileName;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            LastSavedJson = Util.SerializeAndSaveObject(inputFile, FilePath);
+            this.Title = DefaultTitle + " " + FilePath;
+        }
+
         private void BtnSelectFile_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (HasChanges == true && MessageBox.Show("If you have any unsaved changes, you will loose all of them. Continue?", "Save changes", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-                {
-                    return;
-                }
+                AskAndSaveBeforeProceeding();
 
                 InputFile inputFile = new InputFile();
                 Microsoft.Win32.OpenFileDialog openFileDlg = new Microsoft.Win32.OpenFileDialog();
@@ -126,13 +123,15 @@ namespace Ranger
                 if (openFileDlg.FileName != "")
                 {
                     FilePath = openFileDlg.FileName;
-                    inputFile = (InputFile)Util.DeSerializeObject(inputFile, FilePath);
+                    string json = File.ReadAllText(FilePath);
+                    inputFile = (InputFile)Util.DeSerializeObject(inputFile, json);
                     if (inputFile is null)
                     {
                         throw new ArgumentException("Input file is not in correct format.");
                     }
                     else
                     {
+                        LastSavedJson = json;
                         Engineers.Clear();
                         Skills.Clear();
                         SkillEngineers.Clear();
@@ -157,7 +156,6 @@ namespace Ranger
                         this.Title = DefaultTitle + " " + FilePath;
                     }
                 }
-                HasChanges = false;
             }
             catch (Exception ex)
             {
@@ -169,11 +167,7 @@ namespace Ranger
         {
             try
             {
-                if (HasChanges == true && MessageBox.Show("If you have any unsaved changes, you will loose all of them. Continue?", "Save changes", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-                {
-                    return;
-                }
-
+                AskAndSaveBeforeProceeding();
                 SetDefaultWindow();
             }
             catch (Exception ex)
@@ -208,7 +202,6 @@ namespace Ranger
                     if (string.IsNullOrWhiteSpace(NewVal)) throw new ArgumentException("Value cannot be null or blank.");
                     if(NewVal != skill.Name)
                     {
-                        HasChanges = true;
                         foreach(Resource res in Engineers)
                         {
                             foreach(Skill skl in res.Skills)
@@ -232,7 +225,6 @@ namespace Ranger
         {
             try
             {
-                HasChanges = true;
                 Skills.Add(new Skill(Util.GetRandomString(14)));
             }
             catch (Exception ex)
@@ -255,7 +247,6 @@ namespace Ranger
                     }
                 }
 
-                HasChanges = true;
                 Skills.Remove(skill);
             }
             catch (Exception ex)
@@ -270,7 +261,6 @@ namespace Ranger
         {
             try
             {
-                HasChanges = true;
                 Engineers.Add(new Resource(Util.GetRandomString(14)));
             }
             catch (Exception ex)
@@ -283,7 +273,6 @@ namespace Ranger
         {
             try
             {
-                HasChanges = true;
                 if (SelectedResource is null)
                 {
                     throw new InvalidOperationException("No resource selected. Please select a resource.");
@@ -301,9 +290,7 @@ namespace Ranger
         {
             try
             {
-                HasChanges = true;
                 Resource resource = (Resource)((System.Windows.Controls.Button)e.Source).DataContext;
-
                 Engineers.Remove(resource);
             }
             catch (Exception ex)
@@ -362,7 +349,6 @@ namespace Ranger
                 }
 
                 SelectedResource?.Skills.Add(selectedSkill);
-                HasChanges = true;
             }
             catch (Exception ex)
             {
@@ -376,7 +362,6 @@ namespace Ranger
             {
                 Skill skill = (Skill)((System.Windows.Controls.Button)e.Source).DataContext;
                 SelectedResource.Skills.Remove(skill);
-                HasChanges = true;
             }
             catch (Exception ex)
             {
@@ -398,7 +383,6 @@ namespace Ranger
                     }
 
                     SelectedResource.AvailabilityWindows.Add(new AvailabilityWindow(DaysOfWeek.Mon, TimeOnly.MinValue, TimeOnly.MinValue));
-                    HasChanges = true;
                 }
                 else
                 {
@@ -417,7 +401,6 @@ namespace Ranger
             {
                 AvailabilityWindow aw = (AvailabilityWindow)((System.Windows.Controls.Button)e.Source).DataContext;
                 SelectedResource?.AvailabilityWindows.Remove(aw);
-                HasChanges = true;
             }
             catch (Exception ex)
             {
@@ -435,10 +418,7 @@ namespace Ranger
         {
             try
             {
-                if (HasChanges == true && MessageBox.Show("If you have any unsaved changes, you will loose all of them. Continue?", "Save changes", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-                {
-                    e.Cancel = true;
-                }
+                AskAndSaveBeforeProceeding();
             }
             catch (Exception ex)
             {
@@ -560,6 +540,7 @@ namespace Ranger
         {
             try
             {
+                
                 if (plot is null) //clean the UI bars
                 {
                     for (int i = 0; i < MaxHours; i++)
@@ -575,6 +556,7 @@ namespace Ranger
                 }
                 else
                 {
+                    InitializeColorBands(plot);
                     for (int i = 0; i < MaxHours; i++)
                     {
                         SetRectangle(mondayRects[i], DayOfWeekCoverage[DaysOfWeek.Mon][i].Names);
@@ -593,11 +575,43 @@ namespace Ranger
             }
         }
 
+        private void InitializeColorBands(Dictionary<DaysOfWeek, GraphInfo[]>? plot)
+        {
+            Bands = new();
+            int skip = 1;
+            foreach (KeyValuePair<DaysOfWeek, GraphInfo[]> pair in plot)
+            {
+                for (int i = 0; i < MaxHours; i++)
+                {
+                    for(int j = 0;j<pair.Value.Length; j++) //value=GraphInfo[] each different length list
+                    {
+                        for (int k = 0; k < MaxHours; k++)
+                        {
+                            if (!Bands.ContainsKey(pair.Value[k].Names.Count))
+                            {
+                                Bands.Add(pair.Value[k].Names.Count, GreenColors[0]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            skip = (int)Math.Floor((decimal)(GreenColors.Length / Bands.Count));
+            List<int> keys = new List<int>(Bands.Keys);
+
+            int count = 0;
+            foreach(int i in keys)
+            {
+                Bands[i] = GreenColors[count * skip];
+                count++;
+            }
+        }
+
         private void SetRectangle(Rectangle rect, List<string> names)
         {
             try
             {
-                rect.Fill = new SolidColorBrush(GetHMColor(names.Count, Engineers.Count));
+                rect.Fill = new SolidColorBrush(Bands is null ? GreenColors[0] : Bands[names.Count]);
                 rect.ToolTip = new ToolTip() { Content = "(" + names.Count + ") " + String.Join(",", names) };
             }
             catch (Exception ex)
@@ -654,21 +668,6 @@ namespace Ranger
             }
 
             return awWithOffset;
-        }
-
-        private Color GetHMColor(int value, int maxValue)
-        {
-            try
-            {
-                if (value <= 0) return colors[0]; //preventing divide by 0 error
-                float res = ((colors.Length-1) / (float)maxValue) * value;
-                return (colors[(int)Math.Round(res)]);
-            }
-            catch (Exception ex)
-            {
-                ShowError(ex.Message);
-                return Colors.Transparent; // Return a default color in case of an error
-            }
         }
 
         private void CreateRectArray()
@@ -856,24 +855,33 @@ namespace Ranger
             sundayRects[23] = SunRect23;
         }
 
-        private void CreateColorPalatte()
+        private void CreateGreenColorPalatte()
         {
-            colors = new Color[15];
-            colors[0] = (Color)ColorConverter.ConvertFromString("#eafff0");
-            colors[1] = (Color)ColorConverter.ConvertFromString("#c9f2e4");
-            colors[2] = (Color)ColorConverter.ConvertFromString("#a7e3d7");
-            colors[3] = (Color)ColorConverter.ConvertFromString("#85d5ca");
-            colors[4] = (Color)ColorConverter.ConvertFromString("#6cc5c1");
-            colors[5] = (Color)ColorConverter.ConvertFromString("#59b4b9");
-            colors[6] = (Color)ColorConverter.ConvertFromString("#45a2b1");
-            colors[7] = (Color)ColorConverter.ConvertFromString("#2f91aa");
-            colors[8] = (Color)ColorConverter.ConvertFromString("#2780a0");
-            colors[9] = (Color)ColorConverter.ConvertFromString("#246e95");
-            colors[10] = (Color)ColorConverter.ConvertFromString("#1d4c80");
-            colors[11] = (Color)ColorConverter.ConvertFromString("#1d3b77");
-            colors[12] = (Color)ColorConverter.ConvertFromString("#1b2a6d");
-            colors[13] = (Color)ColorConverter.ConvertFromString("#1a1662");
-            colors[14] = (Color)ColorConverter.ConvertFromString("#180054");
+            GreenColors = new Color[24];
+            GreenColors[0] = (Color)ColorConverter.ConvertFromString("#e0fafa");
+            GreenColors[1] = (Color)ColorConverter.ConvertFromString("#c1f5f5");
+            GreenColors[2] = (Color)ColorConverter.ConvertFromString("#a3f0f0");
+            GreenColors[3] = (Color)ColorConverter.ConvertFromString("#85ebeb");
+            GreenColors[4] = (Color)ColorConverter.ConvertFromString("#66e5e5");
+            GreenColors[5] = (Color)ColorConverter.ConvertFromString("#4ddede");
+            GreenColors[6] = (Color)ColorConverter.ConvertFromString("#36d6d6");
+            GreenColors[7] = (Color)ColorConverter.ConvertFromString("#21caca");
+            GreenColors[8] = (Color)ColorConverter.ConvertFromString("#1dbcbc");
+            GreenColors[9] = (Color)ColorConverter.ConvertFromString("#19aeae");
+            GreenColors[10] = (Color)ColorConverter.ConvertFromString("#159f9f");
+            GreenColors[11] = (Color)ColorConverter.ConvertFromString("#109090");
+            GreenColors[12] = (Color)ColorConverter.ConvertFromString("#0b8282");
+            GreenColors[13] = (Color)ColorConverter.ConvertFromString("#067474");
+            GreenColors[14] = (Color)ColorConverter.ConvertFromString("#046868");
+            GreenColors[15] = (Color)ColorConverter.ConvertFromString("#035c5c");
+            GreenColors[16] = (Color)ColorConverter.ConvertFromString("#024f4f");
+            GreenColors[17] = (Color)ColorConverter.ConvertFromString("#024343");
+            GreenColors[18] = (Color)ColorConverter.ConvertFromString("#013737");
+            GreenColors[19] = (Color)ColorConverter.ConvertFromString("#012b2b");
+            GreenColors[20] = (Color)ColorConverter.ConvertFromString("#012020");
+            GreenColors[21] = (Color)ColorConverter.ConvertFromString("#011414");
+            GreenColors[22] = (Color)ColorConverter.ConvertFromString("#010a0a");
+            GreenColors[23] = (Color)ColorConverter.ConvertFromString("#000505");
         }
 
         private void InitiateDayOfWeekCoverage()
@@ -903,6 +911,29 @@ namespace Ranger
             catch (Exception ex)
             {
                 ShowError(ex.Message);
+            }
+        }
+
+        private void CboSkills_DropDownOpened(object sender, EventArgs e)
+        {
+
+        }
+
+        private bool HasChanged()
+        {
+            InputFile? inputFile = new InputFile();
+            inputFile.Skills = Skills.ToList();
+            inputFile.Resources = Engineers.ToList();
+
+            String CurrentJson = Util.SerializeObject(inputFile);
+            return CurrentJson != LastSavedJson;
+        }
+
+        private void AskAndSaveBeforeProceeding()
+        {
+            if (HasChanged() && MessageBox.Show("You have unsaved changes. Do you want to save them before proceeding?", "Save changes?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                Save();
             }
         }
     }

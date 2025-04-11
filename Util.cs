@@ -16,16 +16,27 @@ namespace Ranger
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public static void SerializeObject(Object Obj, string path)
+        public static string SerializeAndSaveObject(Object Obj, string path)
         {
             string jsonString = JsonSerializer.Serialize(Obj);
             File.WriteAllText(path, jsonString);
+            return jsonString;
         }
 
-        public static object? DeSerializeObject(Object Obj, string path)
+        public static string SerializeObject(Object Obj)
+        { 
+            return JsonSerializer.Serialize(Obj);
+        }
+
+        public static object? DeSerializeObject(Object Obj, string json)
         {
-            string json = File.ReadAllText(path);
             return JsonSerializer.Deserialize(json, Obj.GetType());
+        }
+
+        public static string GetEmptyJson()
+        {
+            InputFile? inputFile = new InputFile();
+            return Util.SerializeObject(inputFile);
         }
 
         public static Resource GetResourceCopy(Resource resource)

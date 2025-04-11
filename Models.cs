@@ -55,7 +55,6 @@ namespace Ranger
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-            MainWindow.HasChanges = true;
         }
     }
 
@@ -65,15 +64,24 @@ namespace Ranger
         private TimeOnly endDate;
         private DaysOfWeek dayOfWeek;
 
-        public AvailabilityWindow(DaysOfWeek dayOfWeek, TimeOnly startTime, TimeOnly endTime)
+        public AvailabilityWindow(DaysOfWeek dayOfWeek, TimeOnly startTime, TimeOnly endTime, string id = null)
         {
             DayOfWeek = dayOfWeek;
             StartTime = startTime;
             EndTime = endTime;
             Active = true;
+
+            if (id is null)
+            {
+                Id = Guid.NewGuid().ToString();
+            }
+            else
+            {
+                Id = id;
+            }
         }
 
-        public string Id { get; } = Guid.NewGuid().ToString();
+        public string Id { get; private set; }
 
         public DaysOfWeek DayOfWeek
         {
@@ -112,7 +120,6 @@ namespace Ranger
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-            MainWindow.HasChanges = true;
         }
     }
 
@@ -155,7 +162,6 @@ namespace Ranger
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-            MainWindow.HasChanges = true;
         }
     }
 
