@@ -39,6 +39,7 @@ namespace Ranger
 
         private string DefaultTitle = "Ranger (v 1.5)";
         private string NewTitle = "<New>";
+        private const string ResourceHeader = "Resources"; 
         private int OffSet = 0;
        
         public MainWindow()
@@ -463,10 +464,11 @@ namespace Ranger
                         PlotCoverage(awWithOffset, res);
                         PlotScheduleGrid(awWithOffset, rs);
                     }
-
+                   
                     SkillEngineers.Add(rs);
                 }
 
+                TxtRecourcesHeader.Text = ResourceHeader + " (" + SkillEngineers.Count + ")";
                 PlotCoverageUI(DayOfWeekCoverage);
             }
             catch (Exception ex)
@@ -912,11 +914,6 @@ namespace Ranger
             {
                 ShowError(ex.Message);
             }
-        }
-
-        private void CboSkills_DropDownOpened(object sender, EventArgs e)
-        {
-
         }
 
         private bool HasChanged()
